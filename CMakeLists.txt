@@ -3,8 +3,13 @@ project(weekend_raytracer CXX)
 
 set(CMAKE_CXXSTANDARD 20)
 
+include(CTest)
+
 find_package(GTest)
 
-add_executable(main_test src/main.test.cpp)
+add_executable(main src/main.cpp)
 
+add_executable(main_test src/main.test.cpp)
 target_link_libraries(main_test gtest::gtest)
+add_test(NAME main_test
+         COMMAND main_test)

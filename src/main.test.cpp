@@ -1,7 +1,5 @@
-#include <iostream>
 #include <gtest/gtest.h>
 
-using namespace std;
 using namespace testing;
 
 TEST(FooTest, some_test)
@@ -15,3 +13,42 @@ int main(int argc, char **argv)
     return RUN_ALL_TESTS();
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

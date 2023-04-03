@@ -12,16 +12,8 @@ public:
     using const_iterator = double const *;
 
     vec3() = default;
-
-    template<typename T>
-    vec3(T d): x{static_cast<double>(d)},
-               y{static_cast<double>(d)},
-               z{static_cast<double>(d)} {}
-
-    template<typename T>
-    vec3(T x, T y, T z): x{static_cast<double>(x)},
-                         y{static_cast<double>(y)},
-                         z{static_cast<double>(z)} {}
+    vec3(double d): x{d}, y{d}, z{d} {}
+    vec3(double x, double y, double z): x{x}, y{y}, z{z} {}
 
     double& operator[](std::size_t index)       { return *(&x + index); }
     double  operator[](std::size_t index) const { return *(&x + index); }

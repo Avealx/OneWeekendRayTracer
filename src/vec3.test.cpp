@@ -3,6 +3,7 @@
 #include <gmock/gmock.h>
 
 using testing::Eq;
+using testing::DoubleEq;
 
 #include <array>
 
@@ -25,6 +26,22 @@ public:
           iterator  end()       { return &x + 3; }
     const_iterator  end() const { return &x + 3; }
     const_iterator cend() const { return &x + 3; }
+
+    vec3  operator-() const { return vec3{-x, -y, -z}; }
+
+    vec3& operator+=(vec3 const & v) {
+        for (std::size_t i = 0; i < 3; ++i)
+            (*this)[i] += v[i];
+        return *this;
+    }
+
+    vec3& operator*=(vec3 const & v) {
+        for (std::size_t i = 0; i < 3; ++i)
+            (*this)[i] *= v[i];
+        return *this;
+    }
+
+    vec3& operator/=(double d) { return *this *= 1.0 / d; }
 
     double x = 0, y = 0, z = 0;
 };
@@ -82,13 +99,32 @@ TEST(vec3, has_can_be_used_in_range_for) {
     EXPECT_THAT(v, Eq(vec3{1, 1, 1}));
 }
 
-TEST(vec3, has_can_be_used_in_range_for_const) {
-    vec3 const v{1, 2, 3};
+struct a_vec3 : ::testing::Test {
+    vec3        v{1, 2, 3};
+    vec3 const cv{1, 2, 3};
+};
+
+TEST_F(a_vec3, has_can_be_used_in_range_for_const) {
     double sum = 0.0;
     for (auto x : v)
         sum += x;
     EXPECT_THAT(sum, Eq(6));
 }
+
+TEST_F(a_vec3, can_be_negated) {
+    EXPECT_THAT(-v, Eq(vec3{-1, -2, -3}));
+}
+
+TEST_F(a_vec3, has_add_assignment) {
+    v += v;
+    EXPECT_THAT(v, Eq(vec3{2, 4, 6}));
+}
+
+TEST_F(a_vec3, has_mult_assignment) {
+    v *= v;
+    EXPECT_THAT(v, Eq(vec3{1, 4, 9}));
+}
+
 
 int main(int argc, char **argv)
 {
@@ -96,42 +132,3 @@ int main(int argc, char **argv)
     return RUN_ALL_TESTS();
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

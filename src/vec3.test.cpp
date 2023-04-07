@@ -3,10 +3,11 @@
 #include <gmock/gmock.h>
 
 #include <cmath>
+#include <string>
+#include <sstream>
 
 using testing::Eq;
 using testing::DoubleEq;
-using namespace testing;
 
 #include <array>
 
@@ -59,6 +60,9 @@ bool operator==(vec3 u, vec3 v) { return u[0] == v[0] &&
 std::ostream& operator<<(std::ostream& out, vec3 const & v) { return out << '(' << v.x << ", "
                                                                                 << v.y << ", "
                                                                                 << v.z << ')'; }
+
+using point3 = vec3;
+using color3 = vec3;
 
 TEST(vec3, has_equality) { EXPECT_THAT(vec3{}, Eq(vec3{})); }
 
@@ -149,6 +153,12 @@ TEST_F(a_vec3, has_length_function) {
 
 TEST_F(a_vec3, has_length_squared_function) {
     EXPECT_THAT(v.length_squared(), DoubleEq(14.0));
+}
+
+TEST_F(a_vec3, can_be_printed) {
+    std::stringstream ss;
+    ss << v;
+    EXPECT_THAT(ss.str(), Eq("(1, 2, 3)"));
 }
 
 int main(int argc, char **argv)

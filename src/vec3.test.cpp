@@ -2,8 +2,11 @@
 #include <iostream>
 #include <gmock/gmock.h>
 
+#include <cmath>
+
 using testing::Eq;
 using testing::DoubleEq;
+using namespace testing;
 
 #include <array>
 
@@ -42,6 +45,9 @@ public:
     }
 
     vec3& operator/=(double d) { return *this *= 1.0 / d; }
+
+    double length()         const { return std::sqrt(x*x + y*y + z*z); }
+    double length_squared() const { return           x*x + y*y + z*z ; }
 
     double x = 0, y = 0, z = 0;
 };
@@ -125,6 +131,25 @@ TEST_F(a_vec3, has_mult_assignment) {
     EXPECT_THAT(v, Eq(vec3{1, 4, 9}));
 }
 
+void expect_double_equal(vec3 const & u, vec3 const & v) {
+    EXPECT_THAT(u.x, DoubleEq(v.x));
+    EXPECT_THAT(u.y, DoubleEq(v.y));
+    EXPECT_THAT(u.z, DoubleEq(v.z));
+}
+
+TEST_F(a_vec3, has_div_assignment_with_scalar) {
+    v /= 10.0;
+    expect_double_equal(v, vec3{0.1, 0.2, 0.3});
+}
+
+TEST_F(a_vec3, has_length_function) {
+    vec3 const v{1.0, 2.0, 2.0};
+     EXPECT_THAT(v.length(), DoubleEq(3.0));
+}
+
+TEST_F(a_vec3, has_length_squared_function) {
+    EXPECT_THAT(v.length_squared(), DoubleEq(14.0));
+}
 
 int main(int argc, char **argv)
 {

@@ -1,4 +1,5 @@
 add_executable(main main.cpp)
+target_include_directories(main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 function(setup_test target_filepath)
     # Simplify adding a new test.

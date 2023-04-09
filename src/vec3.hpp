@@ -80,4 +80,3 @@ inline std::ostream& operator<<(std::ostream& out, vec3 const & v) { return out 
                                                                                 << v.z << ')'; }
 
 using point3 = vec3;
-using color  = vec3;

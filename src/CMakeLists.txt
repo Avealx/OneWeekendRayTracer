@@ -20,4 +20,5 @@ function(setup_test target_filepath)
 endfunction()
 
 setup_test(main.test.cpp)
+setup_test(color.test.cpp)
 setup_test(vec3.test.cpp)

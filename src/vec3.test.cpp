@@ -30,6 +30,8 @@ TEST(vec3, can_be_constructed_with_values) {
      EXPECT_THAT(v[2], Eq(3));
 }
 
+TEST(vec3, can_be_constexpr_constructed_with_values) { static_assert(vec3{1,2,3}.x == 1); }
+
 TEST(vec3, has_index_operator)       { vec3       v{}; v[0]; }
 
 TEST(vec3, has_const_index_operator) { vec3 const v{}; v[0]; }
@@ -38,6 +40,8 @@ TEST(vec3, can_be_constructed_with_value) {
      vec3 const v{-1};
      EXPECT_THAT(v, Eq(vec3{-1, -1, -1}));
 }
+
+TEST(vec3, can_be_constexpr_constructed_with_value) { static_assert(vec3{2}.x == 2); }
 
 TEST(vec3, has_begin)  { vec3{}.begin();  }
 
@@ -138,6 +142,10 @@ TEST_F(a_vec3, can_be_multiplied_with_scalar_from_left) {
 
 TEST_F(a_vec3, can_be_divided_by_scalar) {
     EXPECT_THAT(cv / 2.0, Eq(vec3{0.5, 1.0, 1.5}));
+}
+
+TEST_F(a_vec3, can_be_normalized) {
+    EXPECT_THAT(unit_vector(cv).length(), DoubleEq(1.0));
 }
 
 TEST_F(two_vec3, have_dot_product) {

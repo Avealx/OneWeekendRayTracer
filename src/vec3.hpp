@@ -15,8 +15,8 @@ public:
     double x = 0, y = 0, z = 0;
 
     vec3() = default;
-    explicit vec3(double d): x{d}, y{d}, z{d} {}
-    vec3(double x, double y, double z): x{x}, y{y}, z{z} {}
+    explicit constexpr vec3(double d): x{d}, y{d}, z{d} {}
+    constexpr vec3(double x, double y, double z): x{x}, y{y}, z{z} {}
 
     double& operator[](std::size_t index)       { return *(&x + index); }
     double  operator[](std::size_t index) const { return *(&x + index); }
@@ -62,6 +62,8 @@ inline vec3 operator*(double const s, vec3 const & u) { return vec3{s*u.x, s*u.y
 inline vec3 operator*(vec3 const & u, double const s) { return s * u; }
 
 inline vec3 operator/(vec3 const & u, double const s) { return 1.0 / s * u ;}
+
+inline vec3 unit_vector(vec3 const & v) { return v / v.length(); }
 
 inline double dot(vec3 const & u, vec3 const & v) {
     return u.x * v.x

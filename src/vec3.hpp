@@ -12,6 +12,8 @@ public:
     using      iterator = double       *;
     using const_iterator = double const *;
 
+    double x = 0, y = 0, z = 0;
+
     vec3() = default;
     explicit vec3(double d): x{d}, y{d}, z{d} {}
     vec3(double x, double y, double z): x{x}, y{y}, z{z} {}
@@ -45,8 +47,6 @@ public:
 
     double length()         const { return std::sqrt(x*x + y*y + z*z); }
     double length_squared() const { return           x*x + y*y + z*z ; }
-
-    double x = 0, y = 0, z = 0;
 };
 
 bool operator==(vec3 u, vec3 v) { return u[0] == v[0] &&

@@ -12,7 +12,7 @@ public:
     using      iterator = double       *;
     using const_iterator = double const *;
 
-    double x = 0, y = 0, z = 0;
+    double x, y, z;
 
     vec3() = default;
     explicit constexpr vec3(double d): x{d}, y{d}, z{d} {}

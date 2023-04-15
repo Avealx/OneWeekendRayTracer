@@ -18,11 +18,6 @@ TEST(vec3, has_equality) { EXPECT_THAT(vec3{}, Eq(vec3{})); }
 
 TEST(vec3, can_be_default_constructed) { vec3{}; }
 
-TEST(vec3, can_is_default_constructed_to_zero) {
-    auto v = vec3{};
-    EXPECT_THAT(v, Eq(vec3{0, 0, 0}));
-}
-
 TEST(vec3, can_be_constructed_with_values) {
      vec3 const v{1, 2, 3};
      EXPECT_THAT(v[0], Eq(1));

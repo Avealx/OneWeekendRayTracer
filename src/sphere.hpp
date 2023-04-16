@@ -13,15 +13,15 @@ double hit_sphere(Sphere const & s, ray const & r) {
     // => t^2*<r.d,r.d> + 2t<r.d,r.o-s.c> + <r.o-s.c,r.o-s.c> - s.r^2 = 0
     //
     // quadratic formular: ax^2 + bx + c = 0
-    // --> x == frac{-b +- sqrt(b^2 - 4ac)}{2a}
-    //
-    // => b^2 - 4ac > 0 for two hits to exist (else tangential hit or miss)
+    // --> x = frac{-b +- sqrt(b^2 - 4ac)}{2a}
+    // substitute b = 2h
+    // --> x = frac{-h +- sqrt(h^2 - ac)}{a}
     vec3 oc = r.o - s.c;
-    auto a = dot(r.d, r.d);
-    auto b = 2.0 * dot(oc, r.d);
-    auto c = dot(oc, oc) - s.r * s.r;
-    auto discriminant = b*b - 4*a*c;
+    auto a = r.d.length_squared();
+    auto h = dot(oc, r.d);
+    auto c = oc.length_squared() - s.r * s.r;
+    auto discriminant = h*h - a*c;
     if (discriminant < 0)
         return -1.0;
-    return (-b - sqrt(discriminant)) / (2.0 * a);
+    return (-h - sqrt(discriminant)) / a;
 }

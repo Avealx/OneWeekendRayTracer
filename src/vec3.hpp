@@ -9,7 +9,7 @@
 
 class vec3 {
 public:
-    using      iterator = double       *;
+    using       iterator = double       *;
     using const_iterator = double const *;
 
     double x, y, z;
@@ -52,6 +52,8 @@ public:
 bool operator==(vec3 u, vec3 v) { return u[0] == v[0] &&
                                          u[1] == v[1] &&
                                          u[2] == v[2]; }
+
+bool operator!=(vec3 u, vec3 v) { return !(u == v); }
 
 inline vec3 operator+(vec3 const & u, vec3 const & v) { return vec3{u.x + v.x, u.y + v.y, u.z + v.z}; }
 inline vec3 operator-(vec3 const & u, vec3 const & v) { return vec3{u.x - v.x, u.y - v.y, u.z - v.z}; }

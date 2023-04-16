@@ -22,6 +22,7 @@ endfunction()
 
 setup_test(main.test.cpp)
 setup_test(color.test.cpp)
+setup_test(hit.test.cpp)
 setup_test(ray.test.cpp)
 setup_test(sphere.test.cpp)
 setup_test(vec3.test.cpp)

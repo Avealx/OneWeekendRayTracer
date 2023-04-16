@@ -8,13 +8,16 @@
 #include <string>
 #include <sstream>
 
-using testing::Eq;
 using testing::DoubleEq;
+using testing::Eq;
+using testing::Ne;
 
 #include <array>
 
 
 TEST(vec3, has_equality) { EXPECT_THAT(vec3{}, Eq(vec3{})); }
+
+TEST(vec3, has_inequality) { EXPECT_THAT(vec3{0}, Ne(vec3{1})); }
 
 TEST(vec3, can_be_default_constructed) { vec3{}; }
 

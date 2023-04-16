@@ -1,11 +1,16 @@
 #include <color.hpp>
 #include <ray.hpp>
+#include <sphere.hpp>
 #include <vec3.hpp>
 
 #include <iostream>
 
 
 color ray_color(ray const & r) {
+    static constexpr Sphere s{point3{0,0,-1}, 0.5};
+    if (hit_sphere(s, r))
+        return color{0.80, 0.55, 0.75};
+
     vec3 const unit_direction = unit_vector(r.direction());
     auto t = 0.5 * (unit_direction.y + 1.0);
     return (1.0 - t) * color{1.0, 1.0, 1.0} + t * color{0.5, 0.7, 1.0};

@@ -15,34 +15,57 @@ TEST(sphere, has_center) { Sphere{}.c; }
 TEST(sphere, has_radius) { Sphere{}.r; }
 
 TEST(sphere, has_aggregate_constructor) {
-    Sphere s{{1, 2, 3}, 4};
-    EXPECT_THAT(s.c, Eq(vec3{1, 2, 3}));
-    EXPECT_THAT(s.r, Eq(4));
+    Sphere s{{1.0, 2.0, 3.0}, 4.0};
+    EXPECT_THAT(s.c, Eq(vec3{1.0, 2.0, 3.0}));
+    EXPECT_THAT(s.r, Eq(4.0));
 }
 
-TEST(sphere, hit_sphere_misses) {
-    Sphere s{vec3{0, 0, 0}, 1};
-    point3 origin{0, 0, 4};
-    vec3 direction{1, 0, 0};
-    ray r{origin, direction};
-    EXPECT_FALSE(hit_sphere(s, r));
+
+struct a_sphere : testing::Test {
+    Sphere const s{vec3{0.0, 0.0, 0.0}, 1.0};
+};
+
+struct a_sphere_and_missing_ray : a_sphere {
+    point3 const origin{0.0, 0.0, 5.0};
+    vec3   const direction_miss{1.0, 0.0, 0.0};
+    ray    const r{origin, direction_miss};
+};
+
+struct a_sphere_and_tangential_ray : a_sphere {
+    point3 const origin_tangential{1.0, 0.0, 5.0};
+    vec3   const direction{0.0, 0.0, -1.0};
+    ray    const r{origin_tangential, direction};
+};
+
+struct a_sphere_and_ray : a_sphere {
+    point3 const origin{0.0, 0.0, 5.0};
+    vec3   const direction{0.0, 0.0, -1.0};
+    ray    const r{origin, direction};
+};
+
+struct a_sphere_and_unnormalized_ray : a_sphere {
+    point3 const origin{0.0, 0.0, 5.0};
+    vec3   const direction{0.0, 0.0, -2.0};
+    ray    const r{origin, direction};
+};
+
+
+TEST_F(a_sphere_and_missing_ray, hit_sphere_misses) {
+    EXPECT_THAT(hit_sphere(s, r), Eq(-1.0));
 }
 
-TEST(sphere, hit_sphere_hits) {
-    Sphere s{vec3{0, 0, 0}, 1};
-    point3 origin{0, 0, 1};
-    vec3 direction{0, 0, -2};
-    ray r{origin, direction};
-    EXPECT_TRUE(hit_sphere(s, r));
+TEST_F(a_sphere_and_tangential_ray, hit_sphere_hits) {
+    EXPECT_THAT(hit_sphere(s, r), Eq(5.0));
 }
 
-TEST(sphere, hit_sphere_misses_tangential) {
-    Sphere s{vec3{0, 0, 0}, 1};
-    point3 origin{1, 0, 4};
-    vec3 direction{0, 0, -2};
-    ray r{origin, direction};
-    EXPECT_FALSE(hit_sphere(s, r));
+TEST_F(a_sphere_and_ray, hit_sphere_time_is_correct_for_normalized_ray) {
+    EXPECT_THAT(hit_sphere(s, r), Eq(4.0));
 }
+
+TEST_F(a_sphere_and_unnormalized_ray, hit_time_is_correct_for_unnormalized_ray) {
+    EXPECT_THAT(hit_sphere(s, r), Eq(2.0));
+}
+
 
 int main(int argc, char **argv)
 {

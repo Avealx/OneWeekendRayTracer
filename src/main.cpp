@@ -8,12 +8,14 @@
 
 color ray_color(ray const & r) {
     static constexpr Sphere s{point3{0,0,-1}, 0.5};
-    if (hit_sphere(s, r))
-        return color{0.80, 0.55, 0.75};
-
-    vec3 const unit_direction = unit_vector(r.direction());
-    auto t = 0.5 * (unit_direction.y + 1.0);
-    return (1.0 - t) * color{1.0, 1.0, 1.0} + t * color{0.5, 0.7, 1.0};
+    auto t = hit_sphere(s, r);
+    if (t > 0.0) {
+        vec3 N = unit_vector(r.at(t) - vec3(0.0, 0.0, -1.0));
+        return 0.5 * color{N.x + 1, N.y + 1, N.z + 1};
+    }
+    vec3 const unit_direction = unit_vector(r.d);
+    auto l = 0.5 * (unit_direction.y + 1.0);
+    return (1.0 - l) * color{1.0, 1.0, 1.0} + l * color{0.5, 0.7, 1.0};
 }
 
 int main() {

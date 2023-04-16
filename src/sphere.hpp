@@ -7,7 +7,7 @@ struct Sphere {
     double r;
 };
 
-bool hit_sphere(Sphere const & s, ray const & r) {
+double hit_sphere(Sphere const & s, ray const & r) {
     // hit distance(s) t along ray r(t) = r.o + t*r.d:
     // (r(t) - s.o)^2 = s.r^2
     // => t^2*<r.d,r.d> + 2t<r.d,r.o-s.c> + <r.o-s.c,r.o-s.c> - s.r^2 = 0
@@ -21,5 +21,7 @@ bool hit_sphere(Sphere const & s, ray const & r) {
     auto b = 2.0 * dot(oc, r.d);
     auto c = dot(oc, oc) - s.r * s.r;
     auto discriminant = b*b - 4*a*c;
-    return discriminant > 0;
+    if (discriminant < 0)
+        return -1.0;
+    return (-b - sqrt(discriminant)) / (2.0 * a);
 }

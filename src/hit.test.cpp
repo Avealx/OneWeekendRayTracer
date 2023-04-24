@@ -31,6 +31,9 @@ TEST(hit_record, has_can_be_cast_to_bool_false) {
 }
 
 TEST(hit_record, equality_true_miss_mis) {
+    auto miss = hit_record::miss();
+    EXPECT_THAT(hit_record::miss(), Eq(hit_record::miss()));
+    miss.t = 10;
     EXPECT_THAT(hit_record::miss(), Eq(hit_record::miss()));
 }
 

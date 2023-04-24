@@ -8,12 +8,13 @@
 #include <string>
 
 
-enum class FaceSide {front, back};
+enum class FaceSide {front, back, miss /*indicates a miss hit_record*/};
 
 std::string toString(FaceSide const side) {
     switch(side) {
         case FaceSide::front: return "front";
-        case FaceSide::back: return "back";
+        case FaceSide::back:  return "back";
+        case FaceSide::miss:  return "miss";
     }
     return "INVALID SIDE";
 }
@@ -24,10 +25,10 @@ struct hit_record {
     double t;
     FaceSide side;
 
-    explicit operator bool() const { return ! std::isnan(t); }
+    explicit operator bool() const { return side != FaceSide::miss; }
 
     static constexpr hit_record miss() {
-        return hit_record{{}, {}, std::numeric_limits<double>::quiet_NaN(), FaceSide::front};
+        return hit_record{{}, {}, std::numeric_limits<double>::quiet_NaN(), FaceSide::miss};
     }
 
     void set_face_normal(ray const & r, vec3 const & outward_normal) {

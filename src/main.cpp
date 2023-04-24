@@ -1,21 +1,23 @@
 #include <color.hpp>
+#include <common.hpp>
+#include <hit.hpp>
+#include <hittable_list.hpp>
 #include <ray.hpp>
 #include <sphere.hpp>
 #include <vec3.hpp>
 
 #include <iostream>
+#include <memory>
 
 
-color ray_color(ray const & r) {
-    static constexpr Sphere s{point3{0,0,-1}, 0.5};
-    auto t = hit_sphere(s, r);
-    if (t > 0.0) {
-        vec3 N = unit_vector(r.at(t) - vec3(0.0, 0.0, -1.0));
-        return 0.5 * color{N.x + 1, N.y + 1, N.z + 1};
-    }
+color ray_color(ray const & r, hittable_I const & world) {
+    hit_record rec = world.hit(r, 0, infinity);
+    if (rec)
+        return 0.5 * (rec.normal + color{1.0, 1.0, 1.0});
+
     vec3 const unit_direction = unit_vector(r.d);
-    auto l = 0.5 * (unit_direction.y + 1.0);
-    return (1.0 - l) * color{1.0, 1.0, 1.0} + l * color{0.5, 0.7, 1.0};
+    auto t = 0.5 * (unit_direction.y + 1.0);
+    return (1.0 - t) * color{1.0, 1.0, 1.0} + t * color{0.5, 0.7, 1.0};
 }
 
 int main() {
@@ -23,6 +25,11 @@ int main() {
     auto const aspect_ratio = 16.0 / 19.0;
     int const image_width = 600;
     int const image_height = static_cast<int>(aspect_ratio * image_width);
+
+    // World
+    hittable_list world;
+    world.add(std::make_shared<Sphere>(point3{0.0, 0.0, -1.0}, 0.5));
+    world.add(std::make_shared<Sphere>(point3{0.0, -100.5, -1.0}, 100.0));
 
     // Camera
     auto viewport_height = 2.0;
@@ -43,7 +50,7 @@ int main() {
             auto h = static_cast<double>(i) / (image_width  - 1);
             auto v = static_cast<double>(j) / (image_height - 1);
             ray const r{origin, lower_left_corner + h*horizontal + v*vertical - origin};
-            color const pixel_color = ray_color(r);
+            color const pixel_color = ray_color(r, world);
 
             bool const pretty = false;
             write_color(std::cout, pixel_color, pretty);

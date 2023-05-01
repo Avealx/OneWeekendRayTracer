@@ -5,9 +5,11 @@
 
 
 using testing::DoubleEq;
-using testing::Ne;
+using testing::Eq;
 using testing::Ge;
 using testing::Lt;
+using testing::Ne;
+
 
 TEST(common, degree_to_radians) {
     EXPECT_THAT(degree_to_radians(180), DoubleEq(pi));
@@ -28,6 +30,36 @@ TEST(common, random_double_is_in_range) {
     auto x = random_double(min, max);
     EXPECT_THAT(x, Ge(min));
     EXPECT_THAT(x, Lt(max));
+}
+
+struct MyBoolTag{};
+using MyBool = TypedBool<MyBoolTag>;
+
+TEST(common, typed_bool_can_be_constructed) {
+     MyBool{true};
+}
+
+TEST(common, typed_bool_has_truth_value) {
+     EXPECT_TRUE(MyBool{true});
+     EXPECT_FALSE(MyBool{false});
+}
+
+TEST(common, typed_bool_has_negation) {
+    EXPECT_TRUE(!MyBool{false});
+}
+
+TEST(common, typed_bool_has_equality) {
+    EXPECT_THAT(MyBool{false}, Eq(MyBool{false}));
+}
+
+TEST(common, typed_bool_has_inequality) {
+    EXPECT_THAT(MyBool{false}, Ne(MyBool{true}));
+}
+
+TEST(common, DISABLED_typed_bool_cannot_be_cast_across_types) {
+    struct MyBool2Tag{};
+    using MyBool2 = TypedBool<MyBool2Tag>;
+    //MyBool mb{MyBool2{true}}; // TODO: assert that this line is invalid, then enable test
 }
 
 int main(int argc, char **argv)

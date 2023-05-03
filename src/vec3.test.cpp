@@ -8,8 +8,12 @@
 #include <string>
 #include <sstream>
 
+using testing::AllOf;
 using testing::DoubleEq;
 using testing::Eq;
+using testing::Ge;
+using testing::Le;
+using testing::Lt;
 using testing::Ne;
 
 #include <array>
@@ -155,6 +159,27 @@ TEST_F(two_vec3, have_cross_product) {
     vec3 const y{0, 1, 0};
     vec3 const z{0, 0, 1};
     EXPECT_THAT(cross(x, y), Eq(z));
+}
+
+TEST(vec3, can_generate_random_vec3) {
+    auto const r1 = vec3::random(), r2 = vec3::random();
+    EXPECT_THAT(r1, Ne(r2));
+}
+
+TEST(vec3, can_generate_random_bounded_vec3) {
+    double const min = 1.0, max = 2.0;
+    auto const r1 = vec3::random(min, max), r2 = vec3::random(min, max);
+    for (auto c : r1)
+        EXPECT_THAT(c, AllOf(Ge(min), Lt(max)));
+    EXPECT_THAT(r1, Ne(r2));
+}
+
+TEST(vec3, can_generate_random_vec3_in_unit_sphere) {
+    for (int i = 0; i < 100; ++i) {
+        auto const rv = random_in_unit_sphere();
+        EXPECT_THAT(dot(rv, rv), Le(1.0));
+    }
+
 }
 
 int main(int argc, char **argv)

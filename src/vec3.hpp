@@ -1,5 +1,7 @@
 #pragma once
 
+#include <common.hpp>
+
 #include <cmath>
 #include <iostream>
 #include <string>
@@ -7,13 +9,24 @@
 
 #include <array>
 
-class vec3 {
-public:
+struct vec3 {
+    // types
     using       iterator = double       *;
     using const_iterator = double const *;
 
+    // static members
+    inline static vec3 random() {
+        return vec3(random_double(), random_double(), random_double());
+    }
+
+    inline static vec3 random(double min, double max) {
+        return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+    }
+
+    // data members
     double x, y, z;
 
+    // function member
     vec3() = default;
     explicit constexpr vec3(double d): x{d}, y{d}, z{d} {}
     constexpr vec3(double x, double y, double z): x{x}, y{y}, z{z} {}
@@ -71,6 +84,14 @@ inline double dot(vec3 const & u, vec3 const & v) {
     return u.x * v.x
          + u.y * v.y
          + u.z * v.z;
+}
+
+// TODO: how to make this a static member while still using the dot function?
+inline vec3 random_in_unit_sphere() {
+    auto result = vec3::random(-1.0, 1.0);
+    while (dot(result, result) > 1.0)
+        result = vec3::random(-1.0, 1.0);
+    return result;
 }
 
 inline vec3 cross(vec3 const & u, vec3 const & v) {

@@ -2,12 +2,11 @@
 
 #include <common.hpp>
 
+#include <array>
 #include <cmath>
 #include <iostream>
 #include <string>
 #include <sstream>
-
-#include <array>
 
 struct vec3 {
     // types
@@ -98,6 +97,10 @@ inline vec3 cross(vec3 const & u, vec3 const & v) {
    return {u.y * v.z - u.z * v.y,
            u.z * v.x - u.x * v.z,
            u.x * v.y - u.y * v.x};
+}
+
+inline vec3 pow(vec3 const v, double exponent) {
+    return {std::pow(v.x, exponent), std::pow(v.y, exponent), std::pow(v.z, exponent)};
 }
 
 inline std::ostream& operator<<(std::ostream& out, vec3 const & v) { return out << '(' << v.x << ", "

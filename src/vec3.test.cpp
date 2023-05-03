@@ -150,6 +150,10 @@ TEST_F(a_vec3, can_be_normalized) {
     EXPECT_THAT(unit_vector(cv).length(), DoubleEq(1.0));
 }
 
+TEST_F(a_vec3, has_pow) {
+    EXPECT_THAT(pow(cv, 2), Eq(vec3{1.0, 4.0, 9.0}));
+}
+
 TEST_F(two_vec3, have_dot_product) {
     EXPECT_THAT(dot(cu, cv), Eq(140));
 }

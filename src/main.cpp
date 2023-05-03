@@ -15,7 +15,7 @@ color ray_color(ray const & r, hittable_I const & world, int depth) {
     if (depth <= 0)
         return color{0.0, 0.0, 0.0};
 
-    hit_record rec = world.hit(r, 0, infinity);
+    hit_record rec = world.hit(r, 1e-3, infinity);
     if (rec) {
         point3 const target = rec.normal + random_in_unit_sphere();
         return 0.5 * ray_color(ray{rec.p, target - rec.p}, world, depth - 1); // half absorbed?

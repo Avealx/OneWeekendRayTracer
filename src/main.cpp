@@ -56,7 +56,11 @@ int main() {
                 pixel_color += ray_color(r, world, max_depth);
             }
 
-            write_color(std::cout, pixel_color, samples_per_pixel, ns_color::WritePretty{false});
+            write_color(std::cout,
+                        pixel_color,
+                        samples_per_pixel,
+                        ns_color::WritePretty{false},
+                        ns_color::GammaCorrection{true});
             std::cout << " ";
         }
     }

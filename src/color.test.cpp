@@ -37,6 +37,19 @@ TEST(color, can_be_written_to_stream_normalized_by_num_samples) {
     EXPECT_THAT(ss.str(), Eq("0 127 255"));
 }
 
+TEST(color, can_be_written_to_stream_gamma_corrected) {
+    color const c{0.0, 0.25, 1.0};
+    std::stringstream ss{};
+
+    write_color(ss,
+                c,
+                1,
+                ns_color::WritePretty{false},
+                ns_color::GammaCorrection{true});
+
+    EXPECT_THAT(ss.str(), Eq("0 127 255"));
+}
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

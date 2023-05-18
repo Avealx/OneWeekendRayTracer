@@ -97,6 +97,12 @@ inline vec3 random_unit_vector() {
     return unit_vector(random_in_unit_sphere());
 }
 
+inline vec3 random_in_hemisphere(vec3 const & normal) {
+    vec3 const in_unit_sphere = random_in_unit_sphere();
+    return dot(normal, in_unit_sphere) > 0.0 ?  in_unit_sphere
+                                             : -in_unit_sphere;
+}
+
 inline vec3 cross(vec3 const & u, vec3 const & v) {
    return {u.y * v.z - u.z * v.y,
            u.z * v.x - u.x * v.z,

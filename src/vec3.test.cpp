@@ -193,6 +193,14 @@ TEST(vec3, can_generate_random_unit_vec3) {
     }
 }
 
+TEST(vec3, can_generate_random_vec3_in_hemisphere) {
+    for (int i = 0; i < 100; ++i) {
+        auto const normal = vec3::random();
+        auto const rv = random_in_hemisphere(normal);
+        EXPECT_THAT(dot(rv, normal), Ge(0.0));
+    }
+}
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

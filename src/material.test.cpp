@@ -63,6 +63,20 @@ TEST_F(a_lambertian_material, has_attenuation_according_to_albedo) {
     EXPECT_THAT(scatter_info.attenuation, Eq(albedo));
 }
 
+struct a_metal_material : Test {
+    color const  albedo{0.8, 0.85, 0.9};
+    metal const material{albedo};
+
+    hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, FaceSide::front};
+    ray const a_ray{point3{0.0}, vec3{1.0}};
+};
+
+TEST_F(a_metal_material, scatters_via_reflection) {
+    auto scatter_info = material.scatter(a_ray, a_hit_record);
+    EXPECT_THAT(scatter_info.scattered_ray.d, Eq(unit_vector(reflect(a_ray.d, a_hit_record.normal))));
+}
+
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

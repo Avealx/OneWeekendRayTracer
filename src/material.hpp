@@ -34,3 +34,22 @@ public:
 private:
     color albedo_;
 };
+
+//-------------------------------------------------------------------------metal
+class metal : material_I {
+public:
+    explicit constexpr metal(color const & albedo) : albedo_{albedo} {}
+
+    // material_i
+    ScatterInfo scatter(ray const & ray_in, hit_record const & hit_rec) const override {
+        auto const scatter_direction = reflect(unit_vector(ray_in.d), hit_rec.normal);
+
+        ScatterInfo result;
+        result.scattered_ray = ray{hit_rec.p, scatter_direction};
+        result.attenuation = albedo_;
+        return result;
+    }
+
+private:
+    color albedo_;
+};

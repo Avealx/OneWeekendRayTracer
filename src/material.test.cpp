@@ -12,6 +12,8 @@
 
 using ::testing::Eq;
 using ::testing::Ge;
+using ::testing::Gt;
+using ::testing::Lt;
 using ::testing::Test;
 
 
@@ -79,6 +81,24 @@ struct a_metal_material : Test {
 TEST_F(a_metal_material, scatters_via_reflection) {
     auto scatter_info = material.scatter(a_ray, a_hit_record);
     EXPECT_THAT(scatter_info.scattered_ray.d, Eq(unit_vector(reflect(a_ray.d, a_hit_record.normal))));
+}
+
+struct a_fuzzy_metal_material : Test {
+    color const  albedo{0.8, 0.85, 0.9};
+    double const fuzz{0.1};
+    metal const material{albedo, fuzz};
+
+    hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, FaceSide::front};
+    ray const a_ray{point3{0.0}, vec3{1.0}};
+};
+
+TEST_F(a_fuzzy_metal_material, scatters_fuzzy) {
+    auto const scatter_info = material.scatter(a_ray, a_hit_record);
+
+    auto const perfect_reflection = unit_vector(reflect(a_ray.d, a_hit_record.normal));
+    auto const deviation = scatter_info.scattered_ray.d - perfect_reflection;
+    EXPECT_THAT(deviation.length(), Gt(0.0));
+    EXPECT_THAT(deviation.length(), Lt(fuzz));
 }
 
 

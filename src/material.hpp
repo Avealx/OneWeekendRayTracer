@@ -45,11 +45,14 @@ private:
 //-------------------------------------------------------------------------metal
 class metal : public material_I {
 public:
-    explicit constexpr metal(color const & albedo) : albedo_{albedo} {}
+    explicit constexpr metal(color const & albedo, double fuzz = 0.0)
+    : albedo_{albedo}
+    , fuzz_{0.0 <= fuzz && fuzz <= 1.0 ? fuzz : 1.0 } {}
 
     // material_i
     ScatterInfo scatter(ray const & ray_in, hit_record const & hit_rec) const override {
-        auto const scatter_direction = reflect(unit_vector(ray_in.d), hit_rec.normal);
+        auto const scatter_direction = unit_vector(  reflect(ray_in.d, hit_rec.normal)
+                                                   + fuzz_ * random_in_unit_sphere());
 
         ScatterInfo result;
         result.scattered_ray = ray{hit_rec.p, scatter_direction};
@@ -59,4 +62,5 @@ public:
 
 private:
     color albedo_;
+    double fuzz_;
 };

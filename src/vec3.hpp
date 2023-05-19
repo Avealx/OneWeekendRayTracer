@@ -108,6 +108,10 @@ inline vec3 random_in_hemisphere(vec3 const & normal) {
                                              : -in_unit_sphere;
 }
 
+inline vec3 reflect(vec3 const & v, vec3 const & normal) {
+    return v - 2 * dot(v, normal) * normal;
+}
+
 inline vec3 cross(vec3 const & u, vec3 const & v) {
    return {u.y * v.z - u.z * v.y,
            u.z * v.x - u.x * v.z,

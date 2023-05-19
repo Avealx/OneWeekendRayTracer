@@ -65,6 +65,14 @@ TEST(vec3, has_can_be_used_in_range_for) {
     EXPECT_THAT(v, Eq(vec3{1, 1, 1}));
 }
 
+TEST(vec3, has_near_zero_check) {
+    vec3 const far_from_zero{1.0};
+    EXPECT_FALSE(far_from_zero.near_zero());
+
+    vec3 const close_to_zero{1e-32};
+    EXPECT_TRUE(close_to_zero.near_zero());
+}
+
 struct a_vec3 : ::testing::Test {
     vec3        v{1, 2, 3};
     vec3 const cv{1, 2, 3};
@@ -96,12 +104,9 @@ TEST_F(a_vec3, has_mult_assignment) {
     EXPECT_THAT(v, Eq(vec3{2, 4, 6}));
 }
 
-TEST(vec3, has_near_zero_check) {
-    vec3 const far_from_zero{1.0};
-    EXPECT_FALSE(far_from_zero.near_zero());
-
-    vec3 const close_to_zero{1e-32};
-    EXPECT_TRUE(close_to_zero.near_zero());
+TEST_F(a_vec3, can_be_reflected) {
+    auto const reflected = reflect(cv, vec3{0.0, 0.0, 1.0});
+    EXPECT_THAT(reflected, Eq(vec3{cv.x, cv.y, -cv.z}));
 }
 
 // TODO: make proper matcher

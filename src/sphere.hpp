@@ -1,15 +1,19 @@
 #pragma once
 #include <hit.hpp>
+#include <material.hpp>
 #include <ray.hpp>
 #include <vec3.hpp>
 
 #include <iostream>
+#include <memory>
 
 struct Sphere : hittable_I {
     vec3 c;
     double r;
+    std::shared_ptr<material_I> material_ptr;
 
-    constexpr Sphere(vec3 const& c, double r) : c{c}, r{r} {}
+    Sphere(vec3 const& c, double r, std::shared_ptr<material_I> material_ptr = nullptr /*TODO: make proper default material*/)
+    : c{c}, r{r}, material_ptr{material_ptr} {}
 
     hit_record hit(ray const & r, double t_min, double t_max) const override;
 };
@@ -45,5 +49,6 @@ inline hit_record Sphere::hit(ray const & rr, double t_min, double t_max) const 
     result.t = root;
     result.p = rr.at(result.t);
     result.normal = (result.p - c) / r;
+    result.material_ptr = material_ptr;
     return result;
 }

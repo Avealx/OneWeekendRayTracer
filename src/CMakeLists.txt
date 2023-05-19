@@ -21,6 +21,7 @@ function(setup_test target_filepath)
 endfunction()
 
 setup_test(main.test.cpp)
+setup_test(material.test.cpp)
 setup_test(camera.test.cpp)
 setup_test(color.test.cpp)
 setup_test(common.test.cpp)

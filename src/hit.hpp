@@ -1,12 +1,16 @@
 #pragma once
 
+#include <material.hpp>
 #include <ray.hpp>
 
 #include <cmath>
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <string>
 
+
+class material_I;
 
 enum class FaceSide {front, back, miss /*indicates a miss hit_record*/};
 
@@ -22,13 +26,14 @@ std::string toString(FaceSide const side) {
 struct hit_record {
     point3 p;
     vec3 normal;
+    std::shared_ptr<material_I> material_ptr;
     double t;
     FaceSide side;
 
     explicit operator bool() const { return side != FaceSide::miss; }
 
-    static constexpr hit_record miss() {
-        return hit_record{{}, {}, std::numeric_limits<double>::quiet_NaN(), FaceSide::miss};
+    static hit_record miss() {
+        return hit_record{{}, {}, nullptr, std::numeric_limits<double>::quiet_NaN(), FaceSide::miss};
     }
 
     void set_face_normal(ray const & r, vec3 const & outward_normal) {

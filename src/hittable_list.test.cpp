@@ -13,7 +13,7 @@ struct mock_hittable : hittable_I {
     mock_hittable(double distance = 0.0) : distance{distance} {}
 
     hit_record hit(ray const & r, double t_min, double t_max) const override {
-        return distance < t_max ? hit_record{point3{0.0}, vec3{0.0}, distance, FaceSide::front}
+        return distance < t_max ? hit_record{point3{0.0}, vec3{0.0}, nullptr, distance, FaceSide::front}
                                 : hit_record::miss();
     }
 

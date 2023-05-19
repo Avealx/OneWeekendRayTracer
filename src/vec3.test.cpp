@@ -96,6 +96,7 @@ TEST_F(a_vec3, has_mult_assignment) {
     EXPECT_THAT(v, Eq(vec3{2, 4, 6}));
 }
 
+// TODO: make proper matcher
 void expect_double_equal(vec3 const & u, vec3 const & v) {
     EXPECT_THAT(u.x, DoubleEq(v.x));
     EXPECT_THAT(u.y, DoubleEq(v.y));
@@ -183,7 +184,13 @@ TEST(vec3, can_generate_random_vec3_in_unit_sphere) {
         auto const rv = random_in_unit_sphere();
         EXPECT_THAT(dot(rv, rv), Le(1.0));
     }
+}
 
+TEST(vec3, can_generate_random_unit_vec3) {
+    for (int i = 0; i < 100; ++i) {
+        auto const rv = random_unit_vector();
+        EXPECT_THAT(dot(rv, rv), DoubleEq(1.0));
+    }
 }
 
 int main(int argc, char **argv)

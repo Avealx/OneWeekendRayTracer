@@ -93,6 +93,10 @@ inline vec3 random_in_unit_sphere() {
     return result;
 }
 
+inline vec3 random_unit_vector() {
+    return unit_vector(random_in_unit_sphere());
+}
+
 inline vec3 cross(vec3 const & u, vec3 const & v) {
    return {u.y * v.z - u.z * v.y,
            u.z * v.x - u.x * v.z,

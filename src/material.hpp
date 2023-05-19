@@ -8,6 +8,13 @@
 struct ScatterInfo {
     color attenuation;
     ray scattered_ray;
+
+    static ScatterInfo const & miss() {
+        static ScatterInfo the_miss{color{std::numeric_limits<double>::lowest()}, ray{}};
+        return the_miss;
+    }
+
+    explicit operator bool() const { return this != &miss(); }
 };
 
 struct material_I {

@@ -23,6 +23,11 @@ TEST(scatter_info, has_scattered_ray) {
     EXPECT_THAT(typeid(ScatterInfo{}.scattered_ray).name(), Eq(typeid(ray).name()));
 }
 
+TEST(scatter_info, can_be_cast_to_bool) {
+    EXPECT_FALSE(ScatterInfo::miss());
+    EXPECT_TRUE(ScatterInfo{});
+}
+
 struct mock_material : material_I {
     static color mock_color() { return {1.0, 0.1, 0.01}; }
     static ray   mock_ray() { return ray{point3{1.0, 2.0, 3.0}, vec3{3.0, 2.0, 1.0}}; }

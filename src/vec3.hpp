@@ -59,6 +59,11 @@ struct vec3 {
 
     double length()         const { return std::sqrt(x*x + y*y + z*z); }
     double length_squared() const { return           x*x + y*y + z*z ; }
+
+    bool near_zero() const {
+        double constexpr eps = 1e-8;
+        return std::fabs(x) < eps && std::fabs(y) < eps && std::fabs(z) < eps;
+    }
 };
 
 bool operator==(vec3 u, vec3 v) { return u[0] == v[0] &&

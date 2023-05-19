@@ -11,6 +11,8 @@
 
 
 using ::testing::Eq;
+using ::testing::Ge;
+using ::testing::Test;
 
 
 TEST(scatter_info, has_attenuation) {
@@ -37,6 +39,29 @@ TEST(material, has_scatter_returning_ScatterInfo) {
     EXPECT_THAT(scatter_info.scattered_ray, Eq(mock_material::mock_ray()));
 }
 
+//---------------------------------------------------------------------materials
+struct a_lambertian_material : Test {
+    color const albedo{0.9, 0.7, 0.0};
+    lambertian const material{albedo};
+
+    hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, FaceSide::front};
+    ray const a_ray{point3{0.0}, vec3{1.0}};
+};
+
+TEST_F(a_lambertian_material, scatters_starting_at_the_hit_point) {
+    auto scatter_info = material.scatter(a_ray, a_hit_record);
+    EXPECT_THAT(dot(scatter_info.scattered_ray.o, a_hit_record.p), Ge(0.0));
+}
+
+TEST_F(a_lambertian_material, scatters_towards_the_normal) {
+    auto scatter_info = material.scatter(a_ray, a_hit_record);
+    EXPECT_THAT(dot(scatter_info.scattered_ray.d, a_hit_record.normal), Ge(0.0));
+}
+
+TEST_F(a_lambertian_material, has_attenuation_according_to_albedo) {
+    auto scatter_info = material.scatter(a_ray, a_hit_record);
+    EXPECT_THAT(scatter_info.attenuation, Eq(albedo));
+}
 
 int main(int argc, char **argv)
 {

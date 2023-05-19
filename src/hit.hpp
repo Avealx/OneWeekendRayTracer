@@ -1,6 +1,5 @@
 #pragma once
 
-#include <material.hpp>
 #include <ray.hpp>
 
 #include <cmath>

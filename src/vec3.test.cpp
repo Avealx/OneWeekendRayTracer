@@ -96,6 +96,14 @@ TEST_F(a_vec3, has_mult_assignment) {
     EXPECT_THAT(v, Eq(vec3{2, 4, 6}));
 }
 
+TEST(vec3, has_near_zero_check) {
+    vec3 const far_from_zero{1.0};
+    EXPECT_FALSE(far_from_zero.near_zero());
+
+    vec3 const close_to_zero{1e-32};
+    EXPECT_TRUE(close_to_zero.near_zero());
+}
+
 // TODO: make proper matcher
 void expect_double_equal(vec3 const & u, vec3 const & v) {
     EXPECT_THAT(u.x, DoubleEq(v.x));

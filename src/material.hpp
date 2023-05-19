@@ -22,7 +22,7 @@ struct material_I {
 };
 
 //--------------------------------------------------------------------lambertian
-class lambertian : material_I {
+class lambertian : public material_I {
 public:
     explicit constexpr lambertian(color const & albedo) : albedo_{albedo} {}
 
@@ -43,7 +43,7 @@ private:
 };
 
 //-------------------------------------------------------------------------metal
-class metal : material_I {
+class metal : public material_I {
 public:
     explicit constexpr metal(color const & albedo) : albedo_{albedo} {}
 

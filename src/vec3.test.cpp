@@ -109,6 +109,19 @@ TEST_F(a_vec3, can_be_reflected) {
     EXPECT_THAT(reflected, Eq(vec3{cv.x, cv.y, -cv.z}));
 }
 
+
+TEST_F(a_vec3, can_be_refracted) {
+    v = unit_vector({1.0, 0.0, -1.0});
+    vec3 const normal{0.0, 0.0, 1.0};
+    double const etaI = 1.0, etaT = 2.0; // eta for Incoming & Transmissive materials
+    double const etaI_over_etaT{etaI / etaT};
+    auto const transmissed = refract(v, normal, etaI_over_etaT);
+
+    // Snell's law tells us that etaI sin(thetaI) = etaT sin(thetaT)
+    // and in our setup the x components are sin(thetaI) and sin(thetaT)
+    EXPECT_THAT(etaI * v.x, DoubleEq(etaT * transmissed.x));
+}
+
 // TODO: make proper matcher
 void expect_double_equal(vec3 const & u, vec3 const & v) {
     EXPECT_THAT(u.x, DoubleEq(v.x));

@@ -112,6 +112,14 @@ inline vec3 reflect(vec3 const & v, vec3 const & normal) {
     return v - 2 * dot(v, normal) * normal;
 }
 
+inline vec3 refract(vec3 const & in, vec3 const & normal, double const etaI_over_etaT) {
+    // see https://graphics.stanford.edu/courses/cs148-10-summer/docs/2006--degreve--reflection_refraction.pdf
+    auto const cos_thetaI = std::fmin(dot(-in, normal), 1.0);
+    vec3 const t_parallel = etaI_over_etaT * (in + cos_thetaI * normal);
+    vec3 const t_perp = -sqrt(std::fabs(1.0 - t_parallel.length_squared())) * normal;
+    return t_parallel + t_perp;
+}
+
 inline vec3 cross(vec3 const & u, vec3 const & v) {
    return {u.y * v.z - u.z * v.y,
            u.z * v.x - u.x * v.z,

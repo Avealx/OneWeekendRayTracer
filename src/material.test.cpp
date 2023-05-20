@@ -101,6 +101,23 @@ TEST_F(a_fuzzy_metal_material, scatters_fuzzy) {
     EXPECT_THAT(deviation.length(), Lt(fuzz));
 }
 
+struct a_dielectric_material : Test {
+    color const  albedo{0.8, 0.85, 0.9};
+    double const etaT{1.3}; // index of refraction
+    dielectric const material{etaT};
+
+    hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, FaceSide::front};
+    ray const a_ray{point3{0.0}, unit_vector(vec3{0.0, 1.5, -1.0})};
+};
+
+TEST_F(a_dielectric_material, refracts_ray) {
+    auto const scatter_info = material.scatter(a_ray, a_hit_record);
+
+    auto const & refracted_ray = scatter_info.scattered_ray;
+    double const etaI = 1.0;
+    EXPECT_THAT(etaI * a_ray.d.y, Eq(etaT * refracted_ray.d.y));
+}
+
 
 int main(int argc, char **argv)
 {

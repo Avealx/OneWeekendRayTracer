@@ -64,3 +64,24 @@ private:
     color albedo_;
     double fuzz_;
 };
+
+//--------------------------------------------------------------------dielectric
+class dielectric : public material_I {
+public:
+    explicit constexpr dielectric(double index_of_refraction) : etaT_{index_of_refraction} {}
+
+    // material_i
+    ScatterInfo scatter(ray const & ray_in, hit_record const & hit_rec) const override {
+        constexpr double eta = 1.0; // assume that the other material is air
+        double const refraction_ratio = hit_rec.side == FaceSide::front ? (1.0 / etaT_) : etaT_;
+        auto const scatter_direction = refract(unit_vector(ray_in.d), hit_rec.normal, refraction_ratio);
+
+        ScatterInfo result;
+        result.scattered_ray = ray{hit_rec.p, scatter_direction};
+        result.attenuation = color{1.0, 1.0, 1.0};
+        return result;
+    }
+
+private:
+    double etaT_;
+};

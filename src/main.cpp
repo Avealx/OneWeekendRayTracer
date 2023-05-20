@@ -43,8 +43,8 @@ int main() {
     hittable_list world;
 
     auto material_ground = std::make_shared<lambertian>(color{0.4, 0.5, 0.6});
-    auto material_center = std::make_shared<lambertian>(color{0.9, 0.9, 0.9});
-    auto material_left =   std::make_shared<metal>(color{0.8, 0.8, 0.75});
+    auto material_center = std::make_shared<dielectric>(1.1);
+    auto material_left =   std::make_shared<metal>(color{0.8, 0.8, 0.75}, 0.01);
     auto material_right =   std::make_shared<metal>(color{0.8, 0.6, 0.2}, 0.3);
 
     world.add(std::make_shared<Sphere>(point3{0.0, -100.5, -1.0}, 100.0, material_ground));

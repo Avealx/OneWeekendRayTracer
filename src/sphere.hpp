@@ -48,7 +48,8 @@ inline hit_record Sphere::hit(ray const & rr, double t_min, double t_max) const 
     hit_record result;
     result.t = root;
     result.p = rr.at(result.t);
-    result.normal = (result.p - c) / r;
+    vec3 const outward_normal = (result.p - c) / r;
+    result.set_face_normal(rr, outward_normal);
     result.material_ptr = material_ptr;
     return result;
 }

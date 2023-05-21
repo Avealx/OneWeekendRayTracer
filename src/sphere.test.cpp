@@ -57,7 +57,7 @@ TEST_F(a_sphere_and_missing_ray, hit_misses) {
 
 // TODO:fix and continue refactoring tests, then finish 6.4
 TEST_F(a_sphere_and_tangential_ray, hit_sphere_hits) {
-    hit_record const expected_hit_record{point3{1.0, 0.0, 0.0}, vec3{1.0, 0.0, 0.0}, nullptr, 5.0};
+    hit_record const expected_hit_record{point3{1.0, 0.0, 0.0}, vec3{-1.0, 0.0, 0.0}, nullptr, 5.0, FaceSide::back};
     EXPECT_THAT(s.hit(r, 0.0, 10.0), Eq(expected_hit_record));
 }
 

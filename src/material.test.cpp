@@ -6,6 +6,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <algorithm>
 #include <memory>
 #include <typeinfo>
 
@@ -118,12 +119,10 @@ TEST_F(a_dielectric_material, refracts_ray) {
     double const sin_ThetaI = a_ray.d.y;
     auto const & refracted_ray = scatter_info.scattered_ray;
     double const sin_ThetaT = refracted_ray.d.y;
-    EXPECT_THAT(etaI * sin_ThetaI, Eq(etaT * sin_ThetaT));
+    EXPECT_THAT(etaT * sin_ThetaT, Eq(etaI * sin_ThetaI));
 }
 
 double to_radians(double degree) { return degree / 180.0 * pi; }
-
-#include <iostream>
 
 TEST_F(a_dielectric_material, has_total_internal_reflection_when_necessary) {
     // To test for  total internal reflection, we need a eta ratio > 1.0, which implies
@@ -134,19 +133,22 @@ TEST_F(a_dielectric_material, has_total_internal_reflection_when_necessary) {
     double const sin_ThetaCritical = etaI / etaT; // we hit from the backside
     double const delta_theta = 0.01;
 
+    //  BROKEN DUE TO SCHLICK APPROXIMATION
+    //  the flat angle causes reflection with high probability.
+    //
     // refraction when smaller then critical angle
-    {
-        double const sin_theta_refracted = sin_ThetaCritical - delta_theta;
-        double const cos_theta_refracted = std::sqrt(1 - sin_theta_refracted * sin_theta_refracted);
-        ray const ray_to_be_refracted{point3{0.0}, vec3{0.0, sin_theta_refracted, cos_theta_refracted}};
+    //{
+    //    double const sin_theta_refracted = sin_ThetaCritical - delta_theta;
+    //    double const cos_theta_refracted = std::sqrt(1 - sin_theta_refracted * sin_theta_refracted);
+    //    ray const ray_to_be_refracted{point3{0.0}, vec3{0.0, sin_theta_refracted, cos_theta_refracted}};
 
-        auto const scatter_info = material.scatter(ray_to_be_refracted, a_hit_record);
+    //    auto const scatter_info = material.scatter(ray_to_be_refracted, a_hit_record);
 
-        double const sin_ThetaI = ray_to_be_refracted.d.y;
-        auto const &refracted_ray = scatter_info.scattered_ray;
-        double const sin_ThetaT = refracted_ray.d.y;
-        EXPECT_THAT(etaI * sin_ThetaI, DoubleEq(etaT * sin_ThetaT));
-    }
+    //    double const sin_ThetaI = ray_to_be_refracted.d.y;
+    //    auto const &refracted_ray = scatter_info.scattered_ray;
+    //    double const sin_ThetaT = refracted_ray.d.y;
+    //    EXPECT_THAT(etaT * sin_ThetaT, DoubleEq(etaI * sin_ThetaI));
+    //}
 
     // reflection when greater then critical angle
     {
@@ -160,6 +162,18 @@ TEST_F(a_dielectric_material, has_total_internal_reflection_when_necessary) {
         auto const &reflected_ray = scatter_info.scattered_ray;
         EXPECT_THAT(reflected_ray.d.y, DoubleEq(ray_to_be_reflected.d.y));
     }
+}
+
+TEST_F(a_dielectric_material, reflects_probabilistically) {
+    // some of the rays shouldd be reflected, some should be refracted
+    std::size_t const number_of_rays{100};
+    std::vector<double> sin_thetas(number_of_rays);
+    for (auto & sin_theta : sin_thetas)
+        sin_theta = material.scatter(a_ray, a_hit_record).scattered_ray.d.y;
+    bool const all_thetas_the_same = std::adjacent_find(std::cbegin(sin_thetas),
+                                                        std::cend(sin_thetas),
+                                                        std::not_equal_to<>()) == std::cend(sin_thetas);
+    EXPECT_FALSE(all_thetas_the_same);
 }
 
 

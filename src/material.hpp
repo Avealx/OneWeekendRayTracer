@@ -79,9 +79,10 @@ public:
         double cos_theta = std::fmin(dot(-unit_direction, hit_rec.normal), 1.0);
         double sin_theta = std::sqrt(1 - cos_theta * cos_theta);
 
-        bool const can_refract = refraction_ratio * sin_theta <= 1.0;
-        vec3 const scatter_direction = can_refract ? refract(unit_direction, hit_rec.normal, refraction_ratio)
-                                                   : reflect(unit_direction, hit_rec.normal);
+        bool const choose_reflect = refraction_ratio * sin_theta > 1.0
+                                    || reflectance(cos_theta, refraction_ratio) > random_double();
+        vec3 const scatter_direction = choose_reflect ? reflect(unit_direction, hit_rec.normal)
+                                                      : refract(unit_direction, hit_rec.normal, refraction_ratio);
 
         ScatterInfo result;
         result.scattered_ray = ray{hit_rec.p, scatter_direction};
@@ -91,4 +92,10 @@ public:
 
 private:
     double etaT_;
+
+    static double reflectance(double const cos, double const ref_index) {
+        auto const r0 = (1 - ref_index) / (1 + ref_index);
+        auto const r0_squared = r0 * r0;
+        return r0_squared + (1 - r0_squared) * std::pow((1.0 - cos), 5.0);
+    }
 };

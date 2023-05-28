@@ -72,9 +72,16 @@ public:
 
     // material_i
     ScatterInfo scatter(ray const & ray_in, hit_record const & hit_rec) const override {
-        constexpr double eta = 1.0; // assume that the other material is air
-        double const refraction_ratio = hit_rec.side == FaceSide::front ? (1.0 / etaT_) : etaT_;
-        auto const scatter_direction = refract(unit_vector(ray_in.d), hit_rec.normal, refraction_ratio);
+        constexpr double etaI = 1.0; // assume that the other material is air
+        double const refraction_ratio = hit_rec.side == FaceSide::front ? (etaI / etaT_) : etaT_ / etaI;
+
+        vec3 const unit_direction = unit_vector(ray_in.d);
+        double cos_theta = std::fmin(dot(-unit_direction, hit_rec.normal), 1.0);
+        double sin_theta = std::sqrt(1 - cos_theta * cos_theta);
+
+        bool const can_refract = refraction_ratio * sin_theta <= 1.0;
+        vec3 const scatter_direction = can_refract ? refract(unit_direction, hit_rec.normal, refraction_ratio)
+                                                   : reflect(unit_direction, hit_rec.normal);
 
         ScatterInfo result;
         result.scattered_ray = ray{hit_rec.p, scatter_direction};

@@ -10,6 +10,7 @@
 #include <typeinfo>
 
 
+using ::testing::DoubleEq;
 using ::testing::Eq;
 using ::testing::Ge;
 using ::testing::Gt;
@@ -103,6 +104,7 @@ TEST_F(a_fuzzy_metal_material, scatters_fuzzy) {
 
 struct a_dielectric_material : Test {
     color const  albedo{0.8, 0.85, 0.9};
+    double const etaI{1.0}; // hard coded in dielectric
     double const etaT{1.3}; // index of refraction
     dielectric const material{etaT};
 
@@ -113,9 +115,51 @@ struct a_dielectric_material : Test {
 TEST_F(a_dielectric_material, refracts_ray) {
     auto const scatter_info = material.scatter(a_ray, a_hit_record);
 
+    double const sin_ThetaI = a_ray.d.y;
     auto const & refracted_ray = scatter_info.scattered_ray;
-    double const etaI = 1.0;
-    EXPECT_THAT(etaI * a_ray.d.y, Eq(etaT * refracted_ray.d.y));
+    double const sin_ThetaT = refracted_ray.d.y;
+    EXPECT_THAT(etaI * sin_ThetaI, Eq(etaT * sin_ThetaT));
+}
+
+double to_radians(double degree) { return degree / 180.0 * pi; }
+
+#include <iostream>
+
+TEST_F(a_dielectric_material, has_total_internal_reflection_when_necessary) {
+    // To test for  total internal reflection, we need a eta ratio > 1.0, which implies
+    // that the eta in the nominator ('inside') has to be larger then the eta in the
+    // demonimator ('outside').
+    // Most materials have an eta larger then air, so total reflection happens usually
+    // inside the material. Hence, total i n t e r n a l reflection.
+    double const sin_ThetaCritical = etaI / etaT; // we hit from the backside
+    double const delta_theta = 0.01;
+
+    // refraction when smaller then critical angle
+    {
+        double const sin_theta_refracted = sin_ThetaCritical - delta_theta;
+        double const cos_theta_refracted = std::sqrt(1 - sin_theta_refracted * sin_theta_refracted);
+        ray const ray_to_be_refracted{point3{0.0}, vec3{0.0, sin_theta_refracted, cos_theta_refracted}};
+
+        auto const scatter_info = material.scatter(ray_to_be_refracted, a_hit_record);
+
+        double const sin_ThetaI = ray_to_be_refracted.d.y;
+        auto const &refracted_ray = scatter_info.scattered_ray;
+        double const sin_ThetaT = refracted_ray.d.y;
+        EXPECT_THAT(etaI * sin_ThetaI, DoubleEq(etaT * sin_ThetaT));
+    }
+
+    // reflection when greater then critical angle
+    {
+        double const sin_theta_refracted = sin_ThetaCritical + delta_theta;
+        double const cos_theta_refracted = std::sqrt(1 - sin_theta_refracted * sin_theta_refracted);
+        ray const ray_to_be_reflected{point3{0.0}, vec3{0.0, sin_theta_refracted, cos_theta_refracted}};
+
+        hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, FaceSide::back};
+        auto const scatter_info = material.scatter(ray_to_be_reflected, a_hit_record);
+
+        auto const &reflected_ray = scatter_info.scattered_ray;
+        EXPECT_THAT(reflected_ray.d.y, DoubleEq(ray_to_be_reflected.d.y));
+    }
 }
 
 

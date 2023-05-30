@@ -1,0 +1,1 @@
+todo: make vec3 double matcher to proper matcher in vec3.test.cpp, camera.test.cpp

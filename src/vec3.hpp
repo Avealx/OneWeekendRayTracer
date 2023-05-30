@@ -91,6 +91,13 @@ inline double dot(vec3 const & u, vec3 const & v) {
 }
 
 // TODO: how to make this a static member while still using the dot function?
+inline vec3 random_in_unit_disk() {
+    while (true)
+        if (vec3 const v{random_double(-1.0, 1.0), random_double(-1.0, 1.0), 0.0};
+            v.length_squared() < 1.0)
+            return v;
+}
+
 inline vec3 random_in_unit_sphere() {
     auto result = vec3::random(-1.0, 1.0);
     while (dot(result, result) > 1.0)

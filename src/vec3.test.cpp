@@ -205,6 +205,11 @@ TEST(vec3, can_generate_random_bounded_vec3) {
     EXPECT_THAT(r1, Ne(r2));
 }
 
+TEST(vec3, can_generate_random_vec3_in_unit_disc) {
+    vec3 const v = random_in_unit_disk();
+    EXPECT_THAT(v.length(), Lt(1.0));
+}
+
 TEST(vec3, can_generate_random_vec3_in_unit_sphere) {
     for (int i = 0; i < 100; ++i) {
         auto const rv = random_in_unit_sphere();

@@ -13,8 +13,18 @@ TEST(camera, can_be_created) {
 }
 
 struct TestableCamera : public camera {
-    TestableCamera( double const vertical_fov_degree, double const aspect_ratio
-    ) : camera{vertical_fov_degree, aspect_ratio} {}
+    TestableCamera(
+        point3 const lookfrom = vec3{0.0, 0.0, 0.0},
+        point3 const lookat = vec3{0.0, 0.0, -1.0},
+        point3 const vertical_up = vec3{0.0, 1.0, 0.0},
+        double const vertical_fov_degree = 90.0,
+        double const aspect_ratio = 16.0 / 9.0
+    ) : camera{ lookfrom, lookat, vertical_up, vertical_fov_degree, aspect_ratio} {}
+
+    TestableCamera(
+        double const vertical_fov_degree = 90.0,
+        double const aspect_ratio = 16.0 / 9.0
+    ) : camera{ point3{0.0, 0.0, 0.0}, point3{0.0, 0.0, -1.0}, vec3{0.0, 1.0, 0.0}, vertical_fov_degree, aspect_ratio} {}
 
     using camera::lower_left_corner_;
 };
@@ -26,6 +36,8 @@ void expect_double_equal(vec3 const & u, vec3 const & v) {
     EXPECT_THAT(u.z, DoubleEq(v.z));
 }
 
+// TODO: after adding the next test, I cannot give only these two fields to the ctor.
+//       think about how to do this nicely and then continue at linsting 64
 TEST(camera, can_be_created_using_vertical_field_of_view_and_aspect_ratio) {
     double const vertical_fov_deg = 90;
     double const aspect_ratio = 2.0;
@@ -33,7 +45,15 @@ TEST(camera, can_be_created_using_vertical_field_of_view_and_aspect_ratio) {
     expect_double_equal(cam.lower_left_corner_, vec3{-2.0, -1.0, -1.0});
 }
 
-Test
+TEST(camera, can_be_positioned) {
+    point3 const lookfrom{0.0, 1.0, 0.0};
+    point3 const lookat{0.0, 0.0, 0.0};
+    vec3 const vertical_up{0.0, 0.0, -1.0};
+    double const vertical_fov_deg = 90;
+    double const aspect_ratio = 2.0;
+    TestableCamera cam{lookfrom, lookat, vertical_up, vertical_fov_deg, aspect_ratio};
+    expect_double_equal(cam.lower_left_corner_, vec3{-2.0, 0.0, 1.0});
+}
 
 TEST(camera, ray_to_center_of_image_is_correct) {
     EXPECT_THAT(camera{}.get_ray(0.5, 0.5), Eq(ray{{0.0,0.0,0.0}, {0.0, 0.0, -1.0}}));

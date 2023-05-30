@@ -8,6 +8,9 @@
 class camera {
 public:
     camera(
+        point3 const lookfrom = point3{0.0, 0.0, 0.0},
+        point3 const lookat = point3{0.0, 0.0, -1.0},
+        point3 const vertical_up = vec3{0.0, 1.0, 0.0},
         double const vertical_fov_degree = 90.0,
         double const aspect_ratio = 16.0 / 9.0
     ) {
@@ -17,10 +20,14 @@ public:
         auto const viewport_height = 2.0 * h;
         auto const viewport_width = aspect_ratio * viewport_height;
 
-        origin_ = point3{0.0, 0.0, 0.0};
-        horizontal_ = vec3{viewport_width, 0.0, 0.0};
-        vertical_ = vec3{0.0, viewport_height, 0.0};
-        lower_left_corner_ = origin_ - 0.5*horizontal_ - 0.5*vertical_ - vec3{0.0, 0.0, focal_length};
+        auto const w = unit_vector(lookfrom - lookat);
+        auto const u = unit_vector(cross(vertical_up, w));
+        auto const v = cross(w, u);
+
+        origin_ = lookfrom;
+        horizontal_ = viewport_width * u;
+        vertical_ = viewport_height * v;
+        lower_left_corner_ = origin_ - 0.5*horizontal_ - 0.5*vertical_ - w;
     }
 
     ray get_ray(double h, double v) const {

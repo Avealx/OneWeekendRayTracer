@@ -36,7 +36,7 @@ int main() {
     auto const aspect_ratio = 16.0 / 9.0;
     int const image_width = 600;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 100;
+    int const samples_per_pixel = 1000;
     int const max_depth = 50;
 
     // World
@@ -48,13 +48,17 @@ int main() {
     auto material_right = std::make_shared<metal>(color{0.8, 0.6, 0.2}, 0.3);
 
     world.add(std::make_shared<Sphere>(point3{0.0, -100.5, -1.0}, 100.0, material_ground));
-    world.add(std::make_shared<Sphere>(point3{ 0.0, 0.0, -1.0}, 0.5, material_center));
-    world.add(std::make_shared<Sphere>(point3{-1.0, 0.0, -1.0}, 0.5, material_left));
-    world.add(std::make_shared<Sphere>(point3{-1.0, 0.0, -1.0}, -0.35, material_left));
-    world.add(std::make_shared<Sphere>(point3{ 1.0, 0.0, -1.0}, 0.5, material_right));
+    world.add(std::make_shared<Sphere>(point3{ 0.0, 0.0, -1.0}, 0.49, material_center));
+    world.add(std::make_shared<Sphere>(point3{-1.0, 0.0, -1.0}, 0.49, material_left));
+    world.add(std::make_shared<Sphere>(point3{-1.0, 0.0, -1.0}, -0.4, material_left));
+    world.add(std::make_shared<Sphere>(point3{ 1.0, 0.0, -1.0}, 0.49, material_right));
 
     // Camera
-    camera const cam;
+    point3 const lookfrom{-2.0, 2.0, 1.0};
+    point3 const lookat{0.0, 0.0, -1.0};
+    vec3 const vertical_up{0.0, 1.0, 0.0};
+    double const vertical_fov_degree = 30.0;
+    camera const cam{lookfrom, lookat, vertical_up, vertical_fov_degree, aspect_ratio};
 
     // Render
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";

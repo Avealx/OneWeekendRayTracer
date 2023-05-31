@@ -36,7 +36,7 @@ int main() {
     auto const aspect_ratio = 16.0 / 9.0;
     int const image_width = 600;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 1000;
+    int const samples_per_pixel = 100;
     int const max_depth = 50;
 
     // World
@@ -54,11 +54,19 @@ int main() {
     world.add(std::make_shared<Sphere>(point3{ 1.0, 0.0, -1.0}, 0.49, material_right));
 
     // Camera
-    point3 const lookfrom{-2.0, 2.0, 1.0};
+    point3 const lookfrom{2.0, 2.0, 1.0};
     point3 const lookat{0.0, 0.0, -1.0};
     vec3 const vertical_up{0.0, 1.0, 0.0};
     double const vertical_fov_degree = 30.0;
-    camera const cam{lookfrom, lookat, vertical_up, vertical_fov_degree, aspect_ratio};
+    double const aperture = 0.5;
+    double const focus_distance = (lookat - lookfrom).length();
+    camera const cam{lookfrom,
+                     lookat,
+                     vertical_up,
+                     vertical_fov_degree,
+                     aspect_ratio,
+                     aperture,
+                     focus_distance};
 
     // Render
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";

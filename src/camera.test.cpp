@@ -4,8 +4,10 @@
 #include <gmock/gmock.h>
 
 
-using testing::Eq;
 using testing::DoubleEq;
+using testing::Eq;
+using testing::Lt;
+using testing::Ne;
 
 
 TEST(camera, can_be_created) {
@@ -58,6 +60,30 @@ TEST(camera, can_be_positioned) {
 TEST(camera, ray_to_center_of_image_is_correct) {
     EXPECT_THAT(camera{}.get_ray(0.5, 0.5), Eq(ray{{0.0,0.0,0.0}, {0.0, 0.0, -1.0}}));
 }
+
+TEST(camera, ray_to_center_of_image_has_random_origin_according_to_aperture) {
+    point3 const lookfrom = vec3{0.0, 0.0, 0.0};
+    point3 const lookat = vec3{0.0, 0.0, -1.0};
+    point3 const vertical_up = vec3{0.0, 1.0, 0.0};
+    double const vertical_fov_degree = 90.0;
+    double const aspect_ratio = 16.0 / 9.0;
+    double const aperture = 2.0;
+    double const focus_dist = 10.0;
+    camera const cam{lookfrom,
+                     lookat,
+                     vertical_up,
+                     vertical_fov_degree,
+                     aspect_ratio,
+                     aperture,
+                     focus_dist};
+
+    ray const r1 = cam.get_ray(0.5, 0.5);
+    ray const r2 = cam.get_ray(0.5, 0.5);
+
+    EXPECT_THAT(r1, Ne(r2));
+    EXPECT_THAT((r1.o - r2.o).length(), Lt(aperture));
+}
+
 
 int main(int argc, char **argv)
 {

@@ -13,7 +13,8 @@ struct a_ray: ::testing::Test {
     ray const default_constructed_ray{};
     vec3 const origin{1, 2, 3};
     point3 const direction{-1, -2, -3};
-    ray const the_ray{origin, direction};
+    double const time = 4.2;
+    ray const the_ray{origin, direction, time};
 };
 
 TEST_F(a_ray, default_constructor_sets_origin_to_zero) {
@@ -42,6 +43,10 @@ TEST_F(a_ray, can_be_printed) {
     std::stringstream ss;
     ss << the_ray;
     EXPECT_THAT(ss.str(), Eq("r((1, 2, 3)->(-1, -2, -3))"));
+}
+
+TEST_F(a_ray, has_time_default_constructed_to_zero) {
+    EXPECT_THAT(default_constructed_ray.t, Eq(0.0));
 }
 
 int main(int argc, char **argv)

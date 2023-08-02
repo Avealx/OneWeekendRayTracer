@@ -6,6 +6,24 @@
 constexpr double infinity = std::numeric_limits<double>::infinity();
 constexpr double pi = 3.1415926535897932385;
 
+// Simple strong types for complex interfaces.
+// The stored values cannot be used directly but must be retrieved via
+// `.value()`.
+template <typename T, typename Parameter>
+class StrongType
+{
+public:
+    explicit StrongType(T const& value) : value_(value) {}
+    explicit StrongType(T&& value) : value_(std::move(value)) {}
+    T& value() { return value_; }
+    T const& value() const {return value_; }
+private:
+    T value_;
+};
+
+
+// String types for booleans.
+// They allow to be used in expressions
 template<class Tag>
 class TypedBool {
 public:

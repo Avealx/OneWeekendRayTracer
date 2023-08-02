@@ -1,1 +1,6 @@
-todo: make vec3 double matcher to proper matcher in vec3.test.cpp, camera.test.cpp
+todo:
+
+* make vec3 double matcher to proper matcher in vec3.test.cpp, camera.test.cpp
+* think about the constructor of TestableCamera. Should it accept an argument struct?
+* in camera: rename w, u, v into the x, y, z,
+             rename vertical_up into up (or why is it called vertical?)

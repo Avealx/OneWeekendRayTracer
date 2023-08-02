@@ -90,14 +90,14 @@ int main() {
     point3 const lookfrom{13.0, 2.0, 3.0};
     point3 const lookat{0.0, 0.0, 0.0};
     vec3 const vertical_up{0.0, 1.0, 0.0};
-    double const vertical_fov_degree = 20.0;
-    double const aperture = 0.1;
-    double const focus_distance = 10.0;
+    auto const vertical_fov_degree = FieldOfView{20.0};
+    auto const aperture = Aperture{0.1};
+    auto const focus_distance = FocusDistance{10.0};
     camera const cam{lookfrom,
                      lookat,
                      vertical_up,
                      vertical_fov_degree,
-                     aspect_ratio,
+                     AspectRatio{aspect_ratio},
                      aperture,
                      focus_distance};
 

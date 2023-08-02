@@ -7,15 +7,10 @@
 
 #include <iostream>
 
-struct FieldOfViewTag{};
-struct AspectRatioTag{};
-struct ApertureTag{};
-struct FocusDistanceTag{};
-
-using FieldOfView = StrongType<double, FieldOfViewTag>;
-using AspectRatio = StrongType<double, AspectRatioTag>;
-using Aperture = StrongType<double, ApertureTag>;
-using FocusDistance = StrongType<double, FocusDistanceTag>;
+using FieldOfView = StrongType<double, struct FieldOfViewTag>;
+using AspectRatio = StrongType<double, struct AspectRatioTag>;
+using Aperture = StrongType<double, struct ApertureTag>;
+using FocusDistance = StrongType<double, struct FocusDistanceTag>;
 
 class camera {
 public:

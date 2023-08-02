@@ -3,6 +3,7 @@
 #include <common.hpp>
 #include <hit.hpp>
 #include <hittable_list.hpp>
+#include <moving_sphere.hpp>
 #include <ray.hpp>
 #include <sphere.hpp>
 #include <vec3.hpp>
@@ -30,15 +31,21 @@ hittable_list random_scene() {
                 // diffuse
                 auto const albedo = color::random() * color::random();
                 sphere_material = std::make_shared<lambertian>(albedo);
+                point3 const center1 = center + vec3(0.0, random_double(0.0, 0.5), 0.0);
+                double const time0 = 0.0;
+                double const time1 = 1.0;
+                world.add(std::make_shared<MovingSphere>(center, center1, time0, time1, 0.2, sphere_material));
             } else if (choose_mat < 0.95) {
                 // metal
                 auto const albedo = color::random(0.5, 1.0);
                 auto const fuzz = random_double(0.0, 0.5);
                 sphere_material = std::make_shared<metal>(albedo, fuzz);
-            } else
+                world.add(std::make_shared<Sphere>(center, 0.2, sphere_material));
+            } else {
                 // glass
                 sphere_material = std::make_shared<dielectric>(1.5);
-            world.add(std::make_shared<Sphere>(center, 0.2, sphere_material));
+                world.add(std::make_shared<Sphere>(center, 0.2, sphere_material));
+            }
         }
     }
 
@@ -93,13 +100,17 @@ int main() {
     auto const vertical_fov_degree = FieldOfView{20.0};
     auto const aperture = Aperture{0.1};
     auto const focus_distance = FocusDistance{10.0};
+    double time0 = 0.0;
+    double time1 = 1.0;
     camera const cam{lookfrom,
                      lookat,
                      vertical_up,
                      vertical_fov_degree,
                      AspectRatio{aspect_ratio},
                      aperture,
-                     focus_distance};
+                     focus_distance,
+                     time0,
+                     time1};
 
     // Render
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";

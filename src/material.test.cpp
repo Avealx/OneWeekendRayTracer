@@ -52,9 +52,10 @@ TEST(material, has_scatter_returning_ScatterInfo) {
 struct a_lambertian_material : Test {
     color const albedo{0.9, 0.7, 0.0};
     lambertian const material{albedo};
+    double const hit_time = 0.25;
 
     hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, FaceSide::front};
-    ray const a_ray{point3{0.0}, vec3{1.0}};
+    ray const a_ray{point3{0.0}, vec3{1.0}, hit_time};
 };
 
 TEST_F(a_lambertian_material, scatters_starting_at_the_hit_point) {
@@ -72,18 +73,30 @@ TEST_F(a_lambertian_material, has_attenuation_according_to_albedo) {
     EXPECT_THAT(scatter_info.attenuation, Eq(albedo));
 }
 
+TEST_F(a_lambertian_material, stores_the_correct_hit_time) {
+    auto scatter_info = material.scatter(a_ray, a_hit_record);
+    EXPECT_THAT(scatter_info.scattered_ray.time(), Eq(hit_time));
+};
+
 struct a_metal_material : Test {
     color const  albedo{0.8, 0.85, 0.9};
     metal const material{albedo};
+    double const hit_time = 0.25;
 
     hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, FaceSide::front};
-    ray const a_ray{point3{0.0}, vec3{1.0}};
+    ray const a_ray{point3{0.0}, vec3{1.0}, hit_time};
 };
 
 TEST_F(a_metal_material, scatters_via_reflection) {
     auto scatter_info = material.scatter(a_ray, a_hit_record);
     EXPECT_THAT(scatter_info.scattered_ray.d, Eq(unit_vector(reflect(a_ray.d, a_hit_record.normal))));
 }
+
+TEST_F(a_metal_material, stores_the_correct_hit_time) {
+    auto scatter_info = material.scatter(a_ray, a_hit_record);
+    EXPECT_THAT(scatter_info.scattered_ray.time(), Eq(hit_time));
+};
+
 
 struct a_fuzzy_metal_material : Test {
     color const  albedo{0.8, 0.85, 0.9};
@@ -108,9 +121,10 @@ struct a_dielectric_material : Test {
     double const etaI{1.0}; // hard coded in dielectric
     double const etaT{1.3}; // index of refraction
     dielectric const material{etaT};
+    double const hit_time = 0.25;
 
     hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, FaceSide::front};
-    ray const a_ray{point3{0.0}, unit_vector(vec3{0.0, 1.5, -1.0})};
+    ray const a_ray{point3{0.0}, unit_vector(vec3{0.0, 1.5, -1.0}), hit_time};
 };
 
 TEST_F(a_dielectric_material, refracts_ray) {
@@ -175,6 +189,11 @@ TEST_F(a_dielectric_material, reflects_probabilistically) {
                                                         std::not_equal_to<>()) == std::cend(sin_thetas);
     EXPECT_FALSE(all_thetas_the_same);
 }
+
+TEST_F(a_dielectric_material, stores_the_correct_hit_time) {
+    auto scatter_info = material.scatter(a_ray, a_hit_record);
+    EXPECT_THAT(scatter_info.scattered_ray.time(), Eq(hit_time));
+};
 
 
 int main(int argc, char **argv)

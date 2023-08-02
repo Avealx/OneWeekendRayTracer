@@ -33,7 +33,7 @@ public:
             scatter_direction = hit_rec.normal;
 
         ScatterInfo result;
-        result.scattered_ray = ray{hit_rec.p, scatter_direction};
+        result.scattered_ray = ray{hit_rec.p, scatter_direction, ray_in.time()};
         result.attenuation = albedo_;
         return result;
     }
@@ -55,7 +55,7 @@ public:
                                                    + fuzz_ * random_in_unit_sphere());
 
         ScatterInfo result;
-        result.scattered_ray = ray{hit_rec.p, scatter_direction};
+        result.scattered_ray = ray{hit_rec.p, scatter_direction, ray_in.time()};
         result.attenuation = albedo_;
         return result;
     }
@@ -85,7 +85,7 @@ public:
                                                       : refract(unit_direction, hit_rec.normal, refraction_ratio);
 
         ScatterInfo result;
-        result.scattered_ray = ray{hit_rec.p, scatter_direction};
+        result.scattered_ray = ray{hit_rec.p, scatter_direction, ray_in.time()};
         result.attenuation = color{1.0, 1.0, 1.0};
         return result;
     }

@@ -22,6 +22,15 @@ private:
 };
 
 
+template <typename Value, class Tag>
+struct TypedInterval {
+    explicit TypedInterval(Value const & min, Value const & max) : min{min}, max{max} {}
+    Value min, max;
+};
+
+using TimeInterval = TypedInterval<double, struct TimeIntervalTag>;
+
+
 // String types for booleans.
 // They allow to be used in expressions
 template<class Tag>

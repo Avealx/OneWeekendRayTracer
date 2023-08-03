@@ -32,8 +32,7 @@ TEST(common, random_double_is_in_range) {
     EXPECT_THAT(x, Lt(max));
 }
 
-struct MyBoolTag{};
-using MyBool = TypedBool<MyBoolTag>;
+using MyBool = TypedBool<struct MyBoolTag>;
 
 TEST(common, typed_bool_can_be_constructed) {
      MyBool{true};

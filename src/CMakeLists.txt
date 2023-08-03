@@ -20,6 +20,7 @@ function(setup_test target_filepath)
     add_test(NAME ${target_name} COMMAND ${target_name})
 endfunction()
 
+setup_test(aabb.test.cpp)
 setup_test(main.test.cpp)
 setup_test(material.test.cpp)
 setup_test(camera.test.cpp)

@@ -9,16 +9,16 @@ constexpr double pi = 3.1415926535897932385;
 // Simple strong types for complex interfaces.
 // The stored values cannot be used directly but must be retrieved via
 // `.value()`.
-template <typename T, typename Parameter>
+template <typename Value, typename Tag>
 class StrongType
 {
 public:
-    explicit StrongType(T const& value) : value_(value) {}
-    explicit StrongType(T&& value) : value_(std::move(value)) {}
-    T& value() { return value_; }
-    T const& value() const {return value_; }
+    explicit StrongType(Value const& value) : value_(value) {}
+    explicit StrongType(Value&& value) : value_(std::move(value)) {}
+    Value& value() { return value_; }
+    Value const& value() const {return value_; }
 private:
-    T value_;
+    Value value_;
 };
 
 

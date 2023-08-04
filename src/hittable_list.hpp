@@ -9,6 +9,7 @@
 struct hittable_list : hittable_I {
     hittable_list() = default;
     hittable_list(std::shared_ptr<hittable_I> object) { add(object); }
+    hittable_list(std::vector<std::shared_ptr<hittable_I>> const & hittables) : objects{hittables} {}
 
     void clear() { objects.clear(); }
     void add(std::shared_ptr<hittable_I> object) { objects.push_back(object); }

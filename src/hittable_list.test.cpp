@@ -36,6 +36,12 @@ TEST(hittable_list, can_be_constructed_with_element) {
     EXPECT_THAT(hittable_list{std::make_shared<mock_hittable>()}.objects.size(), Eq(1)) ;
 }
 
+TEST(hittable_list, can_be_constructed_from_vector_of_hittables) {
+    hittable_list const hl{{std::make_shared<mock_hittable>(),
+                            std::make_shared<mock_hittable>()}};
+    EXPECT_THAT(hl.objects.size(), Eq(2ul));
+}
+
 TEST(hittable_list, allows_adding_objects) {
     hittable_list hl{};
     auto size_before_add = hl.objects.size();
@@ -60,9 +66,9 @@ TEST(hittable_list, allows_clearing) {
 }
 
 TEST(hittable_list, returns_closest_hit) {
-    hittable_list hl{std::make_shared<mock_hittable>(10.0)};
-    hl.add(std::make_shared<mock_hittable>(5.0));
-    hl.add(std::make_shared<mock_hittable>(7.5));
+    hittable_list hl{{std::make_shared<mock_hittable>(10.0),
+                      std::make_shared<mock_hittable>(5.0),
+                      std::make_shared<mock_hittable>(7.5)}};
 
     double t_min = 0.0, t_max = 20.0;
     auto record = hl.hit(ray{point3{0.0}, vec3{0.0}}, t_min, t_max);
@@ -73,8 +79,8 @@ TEST(hittable_list, returns_closest_hit) {
 TEST(hittable_list, has_bounding_box) {
     vec3 aabb_position0{1.0, 1.0, 1.0};
     vec3 aabb_position1{2.0, 2.0, 2.0};
-    hittable_list hl{std::make_shared<mock_hittable>(0.0, aabb_position0)};
-    hl.add(std::make_shared<mock_hittable>(5.0, aabb_position1));
+    hittable_list hl{{std::make_shared<mock_hittable>(0.0, aabb_position0),
+                      std::make_shared<mock_hittable>(5.0, aabb_position1)}};
     EXPECT_THAT(hl.bounding_box(TimeInterval{}).min(), Eq(aabb_position0));
     EXPECT_THAT(hl.bounding_box(TimeInterval{}).max(), Eq(aabb_position1));
 }

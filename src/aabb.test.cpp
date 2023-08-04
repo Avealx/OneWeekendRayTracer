@@ -68,6 +68,13 @@ TEST(Aabb, can_be_cast_to_bool) {
     EXPECT_FALSE(box_false);
 }
 
+TEST_F(AnAabb, can_be_joined_with_another) {
+    Aabb const another_aabb{AabbBounds{max, 2.0 * max}};
+    auto const surrounding_aabb = surrounding_box(aabb, another_aabb);
+    EXPECT_THAT(surrounding_aabb.min(), Eq(min));
+    EXPECT_THAT(surrounding_aabb.max(), Eq(2.0 * max));
+}
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

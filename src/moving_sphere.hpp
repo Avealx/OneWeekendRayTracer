@@ -1,5 +1,6 @@
 # pragma once
 
+#include <aabb.hpp>
 #include <hit.hpp>
 #include <material.hpp>
 #include <ray.hpp>
@@ -23,6 +24,7 @@ struct MovingSphere : hittable_I {
 
     // hittable_I
     hit_record hit(ray const & r, double t_min, double t_max) const override;
+    Aabb bounding_box(TimeInterval times) const override;
 };
 
 inline vec3 MovingSphere::center(double const time) const {
@@ -56,4 +58,11 @@ inline hit_record MovingSphere::hit(ray const & rr, double t_min, double t_max) 
     result.set_face_normal(rr, outward_normal);
     result.material_ptr = material_ptr;
     return result;
+}
+
+inline Aabb MovingSphere::bounding_box(TimeInterval times) const {
+    return surrounding_box(Aabb{AabbBounds{center(times.min) - vec3{r},
+                                           center(times.min) + vec3{r}}},
+                           Aabb{AabbBounds{center(times.max) - vec3{r},
+                                           center(times.max) + vec3{r}}});
 }

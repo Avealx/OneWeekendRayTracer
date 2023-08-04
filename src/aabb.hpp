@@ -24,7 +24,7 @@ public:
     }
 
 private:
-    AabbBounds const bounds_;
+    AabbBounds bounds_;
 };
 
 inline bool Aabb::hit(ray const & r, TimeInterval times) const {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <aabb.hpp>
 #include <ray.hpp>
 
 #include <cmath>
@@ -60,4 +61,5 @@ bool operator!=(hit_record const & lhs, hit_record const & rhs) {
 
 struct hittable_I {
     virtual hit_record hit(ray const & r, double t_min, double t_max) const = 0;
+    virtual Aabb bounding_box(TimeInterval times) const = 0;
 };

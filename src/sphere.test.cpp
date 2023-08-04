@@ -50,6 +50,10 @@ struct a_sphere_and_unnormalized_ray : a_sphere {
     ray    const r{origin, direction};
 };
 
+TEST_F(a_sphere, has_correct_bounding_box) {
+    EXPECT_THAT(s.bounding_box(TimeInterval{}).min(), Eq(s.c - vec3{s.r}));
+    EXPECT_THAT(s.bounding_box(TimeInterval{}).max(), Eq(s.c + vec3{s.r}));
+}
 
 TEST_F(a_sphere_and_missing_ray, hit_misses) {
     EXPECT_THAT(s.hit(r, 0.0, 10.0), Eq(hit_record::miss()));

@@ -10,14 +10,21 @@ using testing::Eq;
 
 
 struct mock_hittable : hittable_I {
-    mock_hittable(double distance = 0.0) : distance{distance} {}
+    mock_hittable(double distance = 0.0, vec3 const aabb_position = vec3{0.0, 0.0, 0.0})
+        : distance{distance}
+        , aabb_position{aabb_position} {}
 
     hit_record hit(ray const & r, double t_min, double t_max) const override {
         return distance < t_max ? hit_record{point3{0.0}, vec3{0.0}, nullptr, distance, FaceSide::front}
                                 : hit_record::miss();
     }
 
+    Aabb bounding_box(TimeInterval times) const override {
+        return Aabb{AabbBounds{aabb_position, aabb_position}};
+    }
+
     double distance;
+    vec3 aabb_position;
 };
 
 
@@ -63,6 +70,14 @@ TEST(hittable_list, returns_closest_hit) {
     EXPECT_THAT(record.t, Eq(5.0));
 }
 
+TEST(hittable_list, has_bounding_box) {
+    vec3 aabb_position0{1.0, 1.0, 1.0};
+    vec3 aabb_position1{2.0, 2.0, 2.0};
+    hittable_list hl{std::make_shared<mock_hittable>(0.0, aabb_position0)};
+    hl.add(std::make_shared<mock_hittable>(5.0, aabb_position1));
+    EXPECT_THAT(hl.bounding_box(TimeInterval{}).min(), Eq(aabb_position0));
+    EXPECT_THAT(hl.bounding_box(TimeInterval{}).max(), Eq(aabb_position1));
+}
 
 
 int main(int argc, char **argv)

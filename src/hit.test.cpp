@@ -72,6 +72,7 @@ TEST(hit_record, has_correct_side_when_ray_is_inside) {
     EXPECT_THAT(hr.normal, Eq(outward_normal));
 }
 
+
 //TEST(hit_record, has_material) {
 //    hit_record{}.material;
 //}

@@ -24,7 +24,8 @@ private:
 
 template <typename Value, class Tag>
 struct TypedInterval {
-    explicit TypedInterval(Value const & min, Value const & max) : min{min}, max{max} {}
+    explicit TypedInterval() : min{}, max{} {}
+    TypedInterval(Value const & min, Value const & max) : min{min}, max{max} {}
     Value min, max;
 };
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <aabb.hpp>
 #include <hit.hpp>
 #include <material.hpp>
 #include <ray.hpp>
@@ -15,7 +16,9 @@ struct Sphere : hittable_I {
     Sphere(vec3 const& c, double r, std::shared_ptr<material_I> material_ptr = nullptr /*TODO: make proper default material*/)
     : c{c}, r{r}, material_ptr{material_ptr} {}
 
+    // hittable_I
     hit_record hit(ray const & r, double t_min, double t_max) const override;
+    Aabb bounding_box(TimeInterval times) const override;
 };
 
 inline hit_record Sphere::hit(ray const & rr, double t_min, double t_max) const {
@@ -52,4 +55,8 @@ inline hit_record Sphere::hit(ray const & rr, double t_min, double t_max) const 
     result.set_face_normal(rr, outward_normal);
     result.material_ptr = material_ptr;
     return result;
+}
+
+inline Aabb Sphere::bounding_box(TimeInterval times) const {
+    return Aabb{AabbBounds{c - vec3{r}, c + vec3{r}}};
 }

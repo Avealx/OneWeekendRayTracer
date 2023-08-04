@@ -232,6 +232,18 @@ TEST(vec3, can_generate_random_vec3_in_hemisphere) {
     }
 }
 
+TEST(vec3, min_components) {
+    vec3 const u{-1.0, 1.0, -1.0};
+    vec3 const v{-1.0, -1.0, 1.0};
+    EXPECT_THAT(min_components(u, v), Eq(vec3{-1.0}));
+}
+
+TEST(vec3, max_components) {
+    vec3 const u{-1.0, 1.0, -1.0};
+    vec3 const v{1.0, -1.0, 1.0};
+    EXPECT_THAT(max_components(u, v), Eq(vec3{1.0}));
+}
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

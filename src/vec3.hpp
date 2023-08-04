@@ -141,4 +141,16 @@ inline std::ostream& operator<<(std::ostream& out, vec3 const & v) { return out 
                                                                                 << v.y << ", "
                                                                                 << v.z << ')'; }
 
+inline vec3 min_components(vec3 const u, vec3 const v) {
+    return vec3{std::min(u.x, v.x),
+                std::min(u.y, v.y),
+                std::min(u.z, v.z)};
+}
+
+inline vec3 max_components(vec3 const u, vec3 const v) {
+    return vec3{std::max(u.x, v.x),
+                std::max(u.y, v.y),
+                std::max(u.z, v.z)};
+}
+
 using point3 = vec3;

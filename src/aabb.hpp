@@ -17,6 +17,12 @@ public:
 
     bool hit(ray const & r, TimeInterval times) const;
 
+    explicit operator bool() const {
+        return bounds_.min.x <= bounds_.max.x &&
+               bounds_.min.y <= bounds_.max.y &&
+               bounds_.min.z <= bounds_.max.z;
+    }
+
 private:
     AabbBounds const bounds_;
 };

@@ -61,6 +61,13 @@ TEST_F(AnAabb, can_be_missed) {
     EXPECT_FALSE(aabb.hit(r, TimeInterval{0.0, 2.0 * aabb.max().z}));
 }
 
+TEST(Aabb, can_be_cast_to_bool) {
+    Aabb const box_true{AabbBounds{vec3{0.0}, vec3{1.0}}};
+    Aabb const box_false{AabbBounds{vec3{0.0}, vec3{-1.0}}};
+    EXPECT_TRUE(box_true);
+    EXPECT_FALSE(box_false);
+}
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

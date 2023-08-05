@@ -31,11 +31,11 @@ inline vec3 MovingSphere::center(double const time) const {
     return c0 + (time - t0) / (t1 - t0) * (c1 - c0);
 }
 
-inline hit_record MovingSphere::hit(Ray const & rr, double t_min, double t_max) const {
+inline hit_record MovingSphere::hit(Ray const & ray, double t_min, double t_max) const {
     // TODO: unify with Sphere.hit()
-    vec3 oc = rr.o - center(rr.t);
-    auto a = rr.d.length_squared();
-    auto h = dot(oc, rr.d);
+    vec3 oc = ray.o - center(ray.t);
+    auto a = ray.d.length_squared();
+    auto h = dot(oc, ray.d);
     auto C = oc.length_squared() - r * r;
 
     auto discriminant = h*h - a*C;
@@ -53,9 +53,9 @@ inline hit_record MovingSphere::hit(Ray const & rr, double t_min, double t_max) 
 
     hit_record result;
     result.t = root;
-    result.p = rr.at(result.t);
-    vec3 const outward_normal = (result.p - center(rr.t)) / r;
-    result.set_face_normal(rr, outward_normal);
+    result.p = ray.at(result.t);
+    vec3 const outward_normal = (result.p - center(ray.t)) / r;
+    result.set_face_normal(ray, outward_normal);
     result.material_ptr = material_ptr;
     return result;
 }

@@ -21,7 +21,7 @@ struct Sphere : hittable_I {
     Aabb bounding_box(TimeInterval times) const override;
 };
 
-inline hit_record Sphere::hit(Ray const & rr, double t_min, double t_max) const {
+inline hit_record Sphere::hit(Ray const & ray, double t_min, double t_max) const {
     // hit distance(s) t along ray r(t) = r.o + t*r.d:
     // (r(t) - s.o)^2 = s.r^2
     // => t^2*<r.d,r.d> + 2t<r.d,r.o-s.c> + <r.o-s.c,r.o-s.c> - s.r^2 = 0
@@ -30,9 +30,9 @@ inline hit_record Sphere::hit(Ray const & rr, double t_min, double t_max) const 
     // --> x = frac{-b +- sqrt(b^2 - 4ac)}{2a}
     // substitute b = 2h
     // --> x = frac{-h +- sqrt(h^2 - ac)}{a}
-    vec3 oc = rr.o - c;
-    auto a = rr.d.length_squared();
-    auto h = dot(oc, rr.d);
+    vec3 oc = ray.o - c;
+    auto a = ray.d.length_squared();
+    auto h = dot(oc, ray.d);
     auto C = oc.length_squared() - r * r;
 
     auto discriminant = h*h - a*C;
@@ -50,9 +50,9 @@ inline hit_record Sphere::hit(Ray const & rr, double t_min, double t_max) const 
 
     hit_record result;
     result.t = root;
-    result.p = rr.at(result.t);
+    result.p = ray.at(result.t);
     vec3 const outward_normal = (result.p - c) / r;
-    result.set_face_normal(rr, outward_normal);
+    result.set_face_normal(ray, outward_normal);
     result.material_ptr = material_ptr;
     return result;
 }

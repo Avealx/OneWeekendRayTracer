@@ -1,3 +1,4 @@
+#include <bvh.hpp>
 #include <camera.hpp>
 #include <color.hpp>
 #include <common.hpp>
@@ -85,13 +86,14 @@ color ray_color(Ray const & r, hittable_I const & world, int depth) {
 int main() {
     // Image
     auto const aspect_ratio = 3.0 / 2.0;
-    int const image_width = 1200;
+    int const image_width = 600;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 500;
-    int const max_depth = 50;
+    int const samples_per_pixel = 5;
+    int const max_depth = 5;
 
     // World
-    auto const world = random_scene();
+    // auto const world = random_scene();
+    auto const world = BvhNode(random_scene(), TimeInterval{0.0, 1.0}); // TODO:: these are the times time0 and time1 below
 
     // Camera
     point3 const lookfrom{13.0, 2.0, 3.0};

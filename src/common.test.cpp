@@ -34,6 +34,15 @@ TEST(common, random_double_is_in_range) {
     EXPECT_THAT(x, Lt(max));
 }
 
+TEST(common, random_int_is_random) {
+    std::size_t const number_of_terms = 100;
+    std::vector<int> random_ints(number_of_terms);
+    for (std::size_t ii = 0; ii < number_of_terms; ++ii)
+        random_ints[ii] = random_int(0, 2);
+
+    EXPECT_THAT(std::set(std::cbegin(random_ints), std::cend(random_ints)).size(), Eq(3));
+}
+
 using MyBool = TypedBool<struct MyBoolTag>;
 
 TEST(common, typed_bool_can_be_constructed) {

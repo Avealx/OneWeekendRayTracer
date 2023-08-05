@@ -79,3 +79,8 @@ inline double random_double() {
 inline double random_double(double min, double max) {
     return min + (max - min) * random_double();
 }
+
+// random int in [min, max]
+inline int random_int(int const min, int const max) {
+    return static_cast<int>(random_double(min, max+1.0));
+}

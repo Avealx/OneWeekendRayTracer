@@ -17,11 +17,11 @@ struct Sphere : hittable_I {
     : c{c}, r{r}, material_ptr{material_ptr} {}
 
     // hittable_I
-    hit_record hit(ray const & r, double t_min, double t_max) const override;
+    hit_record hit(Ray const & r, double t_min, double t_max) const override;
     Aabb bounding_box(TimeInterval times) const override;
 };
 
-inline hit_record Sphere::hit(ray const & rr, double t_min, double t_max) const {
+inline hit_record Sphere::hit(Ray const & rr, double t_min, double t_max) const {
     // hit distance(s) t along ray r(t) = r.o + t*r.d:
     // (r(t) - s.o)^2 = s.r^2
     // => t^2*<r.d,r.d> + 2t<r.d,r.o-s.c> + <r.o-s.c,r.o-s.c> - s.r^2 = 0

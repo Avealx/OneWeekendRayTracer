@@ -15,7 +15,7 @@ public:
     vec3 min() const { return bounds_.min; }
     vec3 max() const { return bounds_.max; }
 
-    bool hit(ray const & r, TimeInterval times) const;
+    bool hit(Ray const & r, TimeInterval times) const;
 
     explicit operator bool() const {
         return bounds_.min.x <= bounds_.max.x &&
@@ -27,7 +27,7 @@ private:
     AabbBounds bounds_;
 };
 
-inline bool Aabb::hit(ray const & r, TimeInterval times) const {
+inline bool Aabb::hit(Ray const & r, TimeInterval times) const {
     for (std::size_t dim = 0; dim < 3; ++dim) {
         auto const inverse_direction = 1.0 / r.d[dim];
         auto t0 = (bounds_.min[dim] - r.o[dim]) * inverse_direction;

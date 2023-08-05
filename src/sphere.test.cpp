@@ -29,25 +29,25 @@ struct a_sphere : testing::Test {
 struct a_sphere_and_missing_ray : a_sphere {
     point3 const origin{0.0, 0.0, 5.0};
     vec3   const direction_miss{1.0, 0.0, 0.0};
-    ray    const r{origin, direction_miss};
+    Ray    const r{origin, direction_miss};
 };
 
 struct a_sphere_and_tangential_ray : a_sphere {
     point3 const origin_tangential{1.0, 0.0, 5.0};
     vec3   const direction{0.0, 0.0, -1.0};
-    ray    const r{origin_tangential, direction};
+    Ray    const r{origin_tangential, direction};
 };
 
 struct a_sphere_and_ray : a_sphere {
     point3 const origin{0.0, 0.0, 5.0};
     vec3   const direction{0.0, 0.0, -1.0};
-    ray    const r{origin, direction};
+    Ray    const r{origin, direction};
 };
 
 struct a_sphere_and_unnormalized_ray : a_sphere {
     point3 const origin{0.0, 0.0, 5.0};
     vec3   const direction{0.0, 0.0, -2.0};
-    ray    const r{origin, direction};
+    Ray    const r{origin, direction};
 };
 
 TEST_F(a_sphere, has_correct_bounding_box) {

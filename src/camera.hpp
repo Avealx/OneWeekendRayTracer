@@ -45,11 +45,11 @@ public:
         lower_left_corner_ = origin_ - 0.5*horizontal_ - 0.5*vertical_ - focus_dist.value() * w_;
     }
 
-    ray get_ray(double h, double v) const {
+    Ray get_ray(double h, double v) const {
         vec3 const rd = lens_radius_ * random_in_unit_disk();
         vec3 const offset = u_ * rd.x + v_ * rd.y;
         vec3 const origin_in_lens = origin_ + offset;
-        return ray{origin_in_lens,
+        return Ray{origin_in_lens,
                    lower_left_corner_ + h*horizontal_+ v*vertical_ - origin_in_lens,
                    random_double(time0_, time1_)};
     }

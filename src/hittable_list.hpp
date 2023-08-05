@@ -15,7 +15,7 @@ struct hittable_list : hittable_I {
     void add(std::shared_ptr<hittable_I> object) { objects.push_back(object); }
 
     // hittable_I
-    hit_record hit(ray const & r, double t_min, double t_max) const override {
+    hit_record hit(Ray const & r, double t_min, double t_max) const override {
         auto closest_record = hit_record::miss();
         closest_record.t = t_max;
         //auto closest_so_far = t_max;

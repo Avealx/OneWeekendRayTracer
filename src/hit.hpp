@@ -36,7 +36,7 @@ struct hit_record {
         return hit_record{{}, {}, nullptr, std::numeric_limits<double>::quiet_NaN(), FaceSide::miss};
     }
 
-    void set_face_normal(ray const & r, vec3 const & outward_normal) {
+    void set_face_normal(Ray const & r, vec3 const & outward_normal) {
         side = dot(r.d, outward_normal) < 0 ? FaceSide::front : FaceSide::back;
         normal = side == FaceSide::front ? outward_normal : -outward_normal;
     }
@@ -60,6 +60,6 @@ bool operator!=(hit_record const & lhs, hit_record const & rhs) {
 }
 
 struct hittable_I {
-    virtual hit_record hit(ray const & r, double t_min, double t_max) const = 0;
+    virtual hit_record hit(Ray const & r, double t_min, double t_max) const = 0;
     virtual Aabb bounding_box(TimeInterval times) const = 0;
 };

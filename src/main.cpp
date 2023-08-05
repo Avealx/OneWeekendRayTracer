@@ -62,7 +62,7 @@ hittable_list random_scene() {
 }
 
 
-color ray_color(ray const & r, hittable_I const & world, int depth) {
+color ray_color(Ray const & r, hittable_I const & world, int depth) {
     if (depth <= 0)
         return color{0.0, 0.0, 0.0};
 
@@ -122,7 +122,7 @@ int main() {
             for (int s = 0; s < samples_per_pixel; ++s) {
                 auto w = (i + random_double()) / (image_width - 1);
                 auto h = (j + random_double()) / (image_height - 1);
-                ray r = cam.get_ray(w, h);
+                Ray r = cam.get_ray(w, h);
                 pixel_color += ray_color(r, world, max_depth);
             }
 

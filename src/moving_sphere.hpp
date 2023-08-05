@@ -23,7 +23,7 @@ struct MovingSphere : hittable_I {
     vec3 center(double const time) const;
 
     // hittable_I
-    hit_record hit(ray const & r, double t_min, double t_max) const override;
+    hit_record hit(Ray const & r, double t_min, double t_max) const override;
     Aabb bounding_box(TimeInterval times) const override;
 };
 
@@ -31,7 +31,7 @@ inline vec3 MovingSphere::center(double const time) const {
     return c0 + (time - t0) / (t1 - t0) * (c1 - c0);
 }
 
-inline hit_record MovingSphere::hit(ray const & rr, double t_min, double t_max) const {
+inline hit_record MovingSphere::hit(Ray const & rr, double t_min, double t_max) const {
     // TODO: unify with Sphere.hit()
     vec3 oc = rr.o - center(rr.t);
     auto a = rr.d.length_squared();

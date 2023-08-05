@@ -14,7 +14,7 @@ struct mock_hittable : hittable_I {
         : distance{distance}
         , aabb_position{aabb_position} {}
 
-    hit_record hit(ray const & r, double t_min, double t_max) const override {
+    hit_record hit(Ray const & r, double t_min, double t_max) const override {
         return distance < t_max ? hit_record{point3{0.0}, vec3{0.0}, nullptr, distance, FaceSide::front}
                                 : hit_record::miss();
     }
@@ -71,7 +71,7 @@ TEST(hittable_list, returns_closest_hit) {
                       std::make_shared<mock_hittable>(7.5)}};
 
     double t_min = 0.0, t_max = 20.0;
-    auto record = hl.hit(ray{point3{0.0}, vec3{0.0}}, t_min, t_max);
+    auto record = hl.hit(Ray{point3{0.0}, vec3{0.0}}, t_min, t_max);
 
     EXPECT_THAT(record.t, Eq(5.0));
 }

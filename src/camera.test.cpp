@@ -75,7 +75,7 @@ TEST(camera, can_be_positioned) {
 }
 
 TEST(camera, ray_to_center_of_image_is_correct) {
-    EXPECT_THAT(camera{}.get_ray(0.5, 0.5), Eq(ray{{0.0,0.0,0.0}, {0.0, 0.0, -1.0}}));
+    EXPECT_THAT(camera{}.get_ray(0.5, 0.5), Eq(Ray{{0.0,0.0,0.0}, {0.0, 0.0, -1.0}}));
 }
 
 TEST(camera, ray_to_center_of_image_has_random_origin_according_to_aperture) {
@@ -94,8 +94,8 @@ TEST(camera, ray_to_center_of_image_has_random_origin_according_to_aperture) {
                      aperture,
                      focus_dist};
 
-    ray const r1 = cam.get_ray(0.5, 0.5);
-    ray const r2 = cam.get_ray(0.5, 0.5);
+    Ray const r1 = cam.get_ray(0.5, 0.5);
+    Ray const r2 = cam.get_ray(0.5, 0.5);
 
     EXPECT_THAT(r1, Ne(r2));
     EXPECT_THAT((r1.o - r2.o).length(), Lt(aperture.value()));

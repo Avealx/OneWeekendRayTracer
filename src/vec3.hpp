@@ -8,7 +8,29 @@
 #include <string>
 #include <sstream>
 
-struct vec3 {
+
+template <class Base>
+struct inject_trivial_begin_end {
+    auto  begin()       { return reinterpret_cast<typename Base::      iterator>(this); }
+    auto  begin() const { return reinterpret_cast<typename Base::const_iterator>(this); }
+    auto cbegin() const { return reinterpret_cast<typename Base::const_iterator>(this); }
+
+    auto  end()       { return reinterpret_cast<typename Base::      iterator>(static_cast<Base       *>(this) + 1); }
+    auto  end() const { return reinterpret_cast<typename Base::const_iterator>(static_cast<Base const *>(this) + 1); }
+    auto cend() const { return reinterpret_cast<typename Base::const_iterator>(static_cast<Base const *>(this) + 1); }
+};
+
+
+// requires Base implementing concept `iterable` (begin())
+template<class Base>
+struct inject_trivial_indexing {
+    auto& operator[](std::size_t index)       { return *(static_cast<Base       *>(this)->begin() + index); }
+    auto  operator[](std::size_t index) const { return *(static_cast<Base const *>(this)->begin() + index); }
+};
+
+
+struct vec3 : inject_trivial_begin_end<vec3>
+            , inject_trivial_indexing<vec3> {
     // types
     using       iterator = double       *;
     using const_iterator = double const *;
@@ -29,17 +51,6 @@ struct vec3 {
     vec3() = default;
     explicit constexpr vec3(double d): x{d}, y{d}, z{d} {}
     constexpr vec3(double x, double y, double z): x{x}, y{y}, z{z} {}
-
-    double& operator[](std::size_t index)       { return *(&x + index); }
-    double  operator[](std::size_t index) const { return *(&x + index); }
-
-          iterator  begin()       { return &x; }
-    const_iterator  begin() const { return &x; }
-    const_iterator cbegin() const { return &x; }
-
-          iterator  end()       { return &x + 3; }
-    const_iterator  end() const { return &x + 3; }
-    const_iterator cend() const { return &x + 3; }
 
     vec3  operator-() const { return vec3{-x, -y, -z}; }
 

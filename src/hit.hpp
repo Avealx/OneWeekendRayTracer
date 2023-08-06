@@ -2,6 +2,7 @@
 
 #include <aabb.hpp>
 #include <ray.hpp>
+#include <texture.hpp>
 
 #include <cmath>
 #include <iostream>
@@ -28,12 +29,13 @@ struct hit_record {
     vec3 normal;
     std::shared_ptr<material_I> material_ptr;
     double t;
+    TextureCoordinates2d uv;
     FaceSide side;
 
     explicit operator bool() const { return side != FaceSide::miss; }
 
     static hit_record miss() {
-        return hit_record{{}, {}, nullptr, std::numeric_limits<double>::quiet_NaN(), FaceSide::miss};
+        return hit_record{{}, {}, nullptr, std::numeric_limits<double>::quiet_NaN(), {}, FaceSide::miss};
     }
 
     void set_face_normal(Ray const & r, vec3 const & outward_normal) {

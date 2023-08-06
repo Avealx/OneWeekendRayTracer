@@ -54,7 +54,7 @@ struct a_lambertian_material : Test {
     lambertian const material{albedo};
     double const hit_time = 0.25;
 
-    hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, FaceSide::front};
+    hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, {} /*tex crd*/, FaceSide::front};
     Ray const a_ray{point3{0.0}, vec3{1.0}, hit_time};
 };
 
@@ -83,7 +83,7 @@ struct a_metal_material : Test {
     metal const material{albedo};
     double const hit_time = 0.25;
 
-    hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, FaceSide::front};
+    hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, {} /*tex crd*/, FaceSide::front};
     Ray const a_ray{point3{0.0}, vec3{1.0}, hit_time};
 };
 
@@ -103,7 +103,7 @@ struct a_fuzzy_metal_material : Test {
     double const fuzz{0.1};
     metal const material{albedo, fuzz};
 
-    hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, FaceSide::front};
+    hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, {} /*tex crd*/, FaceSide::front};
     Ray const a_ray{point3{0.0}, vec3{1.0}};
 };
 
@@ -123,7 +123,7 @@ struct a_dielectric_material : Test {
     dielectric const material{etaT};
     double const hit_time = 0.25;
 
-    hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, FaceSide::front};
+    hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, {} /*tex crd*/, FaceSide::front};
     Ray const a_ray{point3{0.0}, unit_vector(vec3{0.0, 1.5, -1.0}), hit_time};
 };
 
@@ -170,7 +170,7 @@ TEST_F(a_dielectric_material, has_total_internal_reflection_when_necessary) {
         double const cos_theta_refracted = std::sqrt(1 - sin_theta_refracted * sin_theta_refracted);
         Ray const ray_to_be_reflected{point3{0.0}, vec3{0.0, sin_theta_refracted, cos_theta_refracted}};
 
-        hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, FaceSide::back};
+        hit_record const a_hit_record{point3{2.0}, vec3{0.0, 0.0, 1.0}, nullptr, 0.0, {} /*tex crd*/, FaceSide::back};
         auto const scatter_info = material.scatter(ray_to_be_reflected, a_hit_record);
 
         auto const &reflected_ray = scatter_info.scattered_ray;

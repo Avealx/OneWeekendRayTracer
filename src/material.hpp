@@ -24,7 +24,8 @@ struct material_I {
 //--------------------------------------------------------------------lambertian
 class lambertian : public material_I {
 public:
-    explicit constexpr lambertian(color const & albedo) : albedo_{albedo} {}
+    explicit lambertian(color const & albedo) : albedo_{std::make_shared<SolidColor>(albedo)} {}
+    explicit lambertian(std::shared_ptr<TextureI> albedo) : albedo_{albedo} {}
 
     // material_i
     ScatterInfo scatter(Ray const & ray_in, hit_record const & hit_rec) const override {
@@ -34,12 +35,12 @@ public:
 
         ScatterInfo result;
         result.scattered_ray = Ray{hit_rec.p, scatter_direction, ray_in.time()};
-        result.attenuation = albedo_;
+        result.attenuation = albedo_->value(hit_rec.uv, hit_rec.p);
         return result;
     }
 
 private:
-    color albedo_;
+    std::shared_ptr<TextureI> albedo_;
 };
 
 //-------------------------------------------------------------------------metal

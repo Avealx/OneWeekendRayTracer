@@ -3,6 +3,7 @@
 #include <hit.hpp>
 #include <material.hpp>
 #include <ray.hpp>
+#include <texture.hpp>
 #include <vec3.hpp>
 
 #include <iostream>
@@ -19,6 +20,8 @@ struct Sphere : hittable_I {
     // hittable_I
     hit_record hit(Ray const & r, double t_min, double t_max) const override;
     Aabb bounding_box(TimeInterval times) const override;
+
+    TextureCoordinates2d get_uv(point3 const p) const;
 };
 
 inline hit_record Sphere::hit(Ray const & ray, double t_min, double t_max) const {
@@ -53,10 +56,18 @@ inline hit_record Sphere::hit(Ray const & ray, double t_min, double t_max) const
     result.p = ray.at(result.t);
     vec3 const outward_normal = (result.p - c) / r;
     result.set_face_normal(ray, outward_normal);
+    result.uv = get_uv(outward_normal);
     result.material_ptr = material_ptr;
     return result;
 }
 
 inline Aabb Sphere::bounding_box(TimeInterval times) const {
     return Aabb{AabbBounds{c - vec3{r}, c + vec3{r}}};
+}
+
+// p is a point on the sphere of ratius 1 centered at the origin.
+inline TextureCoordinates2d Sphere::get_uv(point3 const p) const {
+    auto const theta = std::acos(-p.y);
+    auto const phi = std::atan2(-p.z, p.x) + pi;
+    return {phi / (2.0 * pi), theta / pi};
 }

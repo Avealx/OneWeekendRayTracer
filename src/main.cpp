@@ -67,6 +67,16 @@ hittable_list random_scene() {
     return world;
 }
 
+hittable_list two_spheres() {
+    hittable_list world;
+
+    auto checker_texture = std::make_shared<CheckerTexture>(color{0.0, 0.25, 0.25}, color{0.9, 0.9, 0.9});
+    world.add(std::make_shared<Sphere>(point3(0.0, -10.0, 0.0), 10, std::make_shared<lambertian>(checker_texture)));
+    world.add(std::make_shared<Sphere>(point3(0.0,  10.0, 0.0), 10, std::make_shared<lambertian>(checker_texture)));
+
+    return world;
+}
+
 
 color ray_color(Ray const & r, hittable_I const & world, int depth) {
     if (depth <= 0)
@@ -97,37 +107,50 @@ struct Scene {
     Camera camera;
 };
 
-Scene select_scene(SceneID const id) {
+Scene select_scene(SceneID const id)
+{
     point3 const lookfrom{13.0, 2.0, 3.0};
     point3 const lookat{0.0, 0.0, 0.0};
     vec3 const vertical_up{0.0, 1.0, 0.0};
     auto const vertical_fov_degree = FieldOfView{20.0};
-    auto const aperture = Aperture{0.1};
     auto const focus_distance = FocusDistance{10.0};
     double const time0 = 0.0;
     double const time1 = 1.0;
 
-    return {random_scene(),
+    Aperture aperture{0.0};
+    hittable_list world;
+
+    switch (id) {
+    case SceneID::random_spheres:
+        aperture = Aperture{0.1};
+        world = random_scene();
+        break;
+    case SceneID::two_spheres:
+        world = two_spheres();
+        break;
+    }
+
+    return {world,
             Camera{lookfrom,
-                    lookat,
-                    vertical_up,
-                    vertical_fov_degree,
-                    AspectRatio{aspect_ratio},
-                    aperture,
-                    focus_distance,
-                    time0,
-                    time1}};
+                   lookat,
+                   vertical_up,
+                   vertical_fov_degree,
+                   AspectRatio{aspect_ratio},
+                   aperture,
+                   focus_distance,
+                   time0,
+                   time1}};
 }
 
 int main() {
     // Image
     int const image_width = 600;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 5;
-    int const max_depth = 5;
+    int const samples_per_pixel = 50;
+    int const max_depth = 50;
 
     // World and camera
-    auto const scene = select_scene(SceneID::random_spheres);
+    auto const scene = select_scene(SceneID::two_spheres);
     auto const world = BvhNode(scene.world, TimeInterval{0.0, 1.0});
     auto const camera = scene.camera;
 

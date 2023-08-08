@@ -5,6 +5,7 @@
 #include <hit.hpp>
 #include <hittable_list.hpp>
 #include <moving_sphere.hpp>
+#include <perlin.hpp>
 #include <ray.hpp>
 #include <sphere.hpp>
 #include <vec3.hpp>
@@ -77,6 +78,15 @@ hittable_list two_spheres() {
     return world;
 }
 
+hittable_list two_perlin_spheres() {
+    hittable_list world;
+
+    auto perlin_texture = std::make_shared<NoiseTexture>(4.0 /*frequency scale*/);
+    world.add(std::make_shared<Sphere>(point3{0.0, -1000.0, 0.0}, 1000.0, std::make_shared<lambertian>(perlin_texture)));
+    world.add(std::make_shared<Sphere>(point3{0.0, 2.0, 0.0}, 2.0, std::make_shared<lambertian>(perlin_texture)));
+
+    return world;
+}
 
 color ray_color(Ray const & r, hittable_I const & world, int depth) {
     if (depth <= 0)
@@ -100,8 +110,10 @@ color ray_color(Ray const & r, hittable_I const & world, int depth) {
 
 enum class SceneID {
     random_spheres,
-    two_spheres
+    two_spheres,
+    two_perlin_spheres,
 };
+
 struct Scene {
     hittable_list world;
     Camera camera;
@@ -128,6 +140,9 @@ Scene select_scene(SceneID const id)
     case SceneID::two_spheres:
         world = two_spheres();
         break;
+    case SceneID::two_perlin_spheres:
+        world = two_perlin_spheres();
+        break;
     }
 
     return {world,
@@ -147,34 +162,70 @@ int main() {
     int const image_width = 600;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
     int const samples_per_pixel = 50;
-    int const max_depth = 50;
+    int const max_depth = 5;
 
     // World and camera
-    auto const scene = select_scene(SceneID::two_spheres);
+    auto const scene = select_scene(SceneID::two_perlin_spheres);
+    // auto const scene = select_scene(SceneID::two_spheres);
     auto const world = BvhNode(scene.world, TimeInterval{0.0, 1.0});
     auto const camera = scene.camera;
 
     // Render
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
-    for (int j = image_height - 1; j >= 0; --j) {
-        std::cerr << "\rScanlines remaining: " << j << ' ' <<  std::flush;
-        for (int i = 0; i < image_width; ++i) {
-            color pixel_color{0.0, 0.0, 0.0};
-            for (int s = 0; s < samples_per_pixel; ++s) {
-                auto w = (i + random_double()) / (image_width - 1);
-                auto h = (j + random_double()) / (image_height - 1);
-                Ray r = camera.get_ray(w, h);
-                pixel_color += ray_color(r, world, max_depth);
-            }
+    if (true) {
+        for (int j = image_height - 1; j >= 0; --j)
+        {
+            std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+            for (int i = 0; i < image_width; ++i)
+            {
+                color pixel_color{0.0, 0.0, 0.0};
+                for (int s = 0; s < samples_per_pixel; ++s) {
+                    auto w = (i + random_double()) / (image_width - 1);
+                    auto h = (j + random_double()) / (image_height - 1);
+                    Ray r = camera.get_ray(w, h);
+                    pixel_color += ray_color(r, world, max_depth);
+                }
 
+                write_color(std::cout,
+                            pixel_color,
+                            samples_per_pixel,
+                            ns_color::WritePretty{false},
+                            ns_color::GammaCorrection{true});
+                std::cout << " ";
+            }
+        }
+    }
+    else {
+        Perlin noise{};
+        double min = std::numeric_limits<double>::max();
+        double max = std::numeric_limits<double>::lowest();
+        std::vector<double> values;
+
+        for (int j = image_height - 1; j >= 0; --j) {
+            std::cerr << "\rScanlines remaining: " << j << ' ' <<  std::flush;
+            for (int i = 0; i < image_width; ++i) {
+                double const value = noise(vec3{static_cast<double>(i) * 10 / image_width,
+                                                static_cast<double>(j) * 10 / image_height,
+                                                1.0});
+                values.push_back(value);
+                min = std::min(min, value);
+                max = std::max(max, value);
+            }
+        }
+
+        for (auto v : values) {
+            color const pixel_color{(v - min) / (max - min)};
             write_color(std::cout,
                         pixel_color,
-                        samples_per_pixel,
+                        1,
                         ns_color::WritePretty{false},
                         ns_color::GammaCorrection{true});
             std::cout << " ";
         }
+
     }
+
+
     std:: cerr << "\nDone.\n";
 }

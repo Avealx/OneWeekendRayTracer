@@ -2,6 +2,7 @@
 
 #include <color.hpp>
 #include <crtp_functionality.hpp>
+#include <perlin.hpp>
 #include <vec3.hpp>
 
 #include <memory>
@@ -50,4 +51,18 @@ struct CheckerTexture : TextureI {
 
     std::shared_ptr<TextureI> even;
     std::shared_ptr<TextureI> odd;
+};
+
+struct NoiseTexture : TextureI {
+
+    NoiseTexture(double const scale = 1.0) : scale{scale} {}
+
+    // TextureI
+    color value(TextureCoordinates2d const uv, point3 const & p) const override {
+        // return color(1.0, 1.0, 1.0) * std::abs(noise(scale * p));
+        return color(1.0, 1.0, 1.0) * (1.0 + noise(scale * p)) * 0.5;
+    }
+
+    Perlin noise;
+    double const scale;
 };

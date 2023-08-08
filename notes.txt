@@ -1,6 +1,12 @@
 todo:
 
 * make vec3 double matcher to proper matcher in vec3.test.cpp, camera.test.cpp
-* think about the constructor of TestableCamera. Should it accept an argument struct?
+* create src files to decouple the complilation units.
 * in camera: rename w, u, v into the x, y, z,
              rename vertical_up into up (or why is it called vertical?)
+
+Elaborate on
+------------
+* Bounding Volume Hierarchy
+* Noise examples
+  * use absolute value

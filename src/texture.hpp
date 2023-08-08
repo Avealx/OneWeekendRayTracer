@@ -4,6 +4,7 @@
 #include <crtp_functionality.hpp>
 #include <vec3.hpp>
 
+#include <memory>
 
 struct TextureCoordinates2d : inject_pointer_as_iterator<double>
                             , inject_trivial_begin_end<TextureCoordinates2d>
@@ -31,4 +32,22 @@ public:
 
 private:
     color value_;
+};
+
+struct CheckerTexture : TextureI {
+    CheckerTexture() = default;
+    CheckerTexture(std::shared_ptr<TextureI> even, std::shared_ptr<TextureI> odd) : even{even}, odd{odd} {}
+    CheckerTexture(color const color0, color const color1) : even{std::make_shared<SolidColor>(color0)}
+                                                           , odd{std::make_shared<SolidColor>(color1)} {}
+
+    // TextureI
+    color value(TextureCoordinates2d const uv, point3 const & p) const override {
+        auto sines = std::sin(10.0 * p.x) * std::sin(10.0 * p.y) * std::sin(10.0 * p.z);
+        if (sines < 0)
+            return odd->value(uv, p);
+        return even->value(uv, p);
+    }
+
+    std::shared_ptr<TextureI> even;
+    std::shared_ptr<TextureI> odd;
 };

@@ -16,7 +16,9 @@
 hittable_list random_scene() {
     hittable_list world;
 
-    auto ground_material = std::make_shared<lambertian>(color{0.5, 0.5, 0.5, });
+    // auto ground_material = std::make_shared<lambertian>(color{0.5, 0.5, 0.5, });
+    auto ground_texture = std::make_shared<CheckerTexture>(color{0.0, 0.25, 0.25}, color{0.15, 0.05, 0.05});
+    auto ground_material = std::make_shared<lambertian>(ground_texture);
     world.add(std::make_shared<Sphere>(point3{0.0, -1000.0, 0.0}, 1000.0, ground_material));
 
     for (int a = -11; a < 11; ++a) {
@@ -34,7 +36,7 @@ hittable_list random_scene() {
                 sphere_material = std::make_shared<lambertian>(albedo);
                 point3 const center1 = center + vec3(0.0, random_double(0.0, 0.5), 0.0);
                 double const time0 = 0.0;
-                double const time1 = 1.0;
+                double const time1 = 0.5;
                 world.add(std::make_shared<MovingSphere>(center, center1, time0, time1, 0.2, sphere_material));
             } else if (choose_mat < 0.95) {
                 // metal
@@ -86,10 +88,10 @@ color ray_color(Ray const & r, hittable_I const & world, int depth) {
 int main() {
     // Image
     auto const aspect_ratio = 3.0 / 2.0;
-    int const image_width = 600;
+    int const image_width = 1200;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 5;
-    int const max_depth = 5;
+    int const samples_per_pixel = 500;
+    int const max_depth = 50;
 
     // World
     // auto const world = random_scene();

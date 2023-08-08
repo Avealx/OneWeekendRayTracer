@@ -13,6 +13,9 @@
 #include <memory>
 
 
+auto const aspect_ratio = 3.0 / 2.0;
+
+
 hittable_list random_scene() {
     hittable_list world;
 
@@ -36,7 +39,7 @@ hittable_list random_scene() {
                 sphere_material = std::make_shared<lambertian>(albedo);
                 point3 const center1 = center + vec3(0.0, random_double(0.0, 0.5), 0.0);
                 double const time0 = 0.0;
-                double const time1 = 0.5;
+                double const time1 = 1.0;
                 world.add(std::make_shared<MovingSphere>(center, center1, time0, time1, 0.2, sphere_material));
             } else if (choose_mat < 0.95) {
                 // metal
@@ -85,36 +88,48 @@ color ray_color(Ray const & r, hittable_I const & world, int depth) {
     return (1.0 - t) * color{1.0, 1.0, 1.0} + t * color{0.5, 0.7, 1.0};
 }
 
-int main() {
-    // Image
-    auto const aspect_ratio = 3.0 / 2.0;
-    int const image_width = 1200;
-    int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 500;
-    int const max_depth = 50;
+enum class SceneID {
+    random_spheres,
+    two_spheres
+};
+struct Scene {
+    hittable_list world;
+    Camera camera;
+};
 
-    // World
-    // auto const world = random_scene();
-    auto const world = BvhNode(random_scene(), TimeInterval{0.0, 1.0}); // TODO:: these are the times time0 and time1 below
-
-    // Camera
+Scene select_scene(SceneID const id) {
     point3 const lookfrom{13.0, 2.0, 3.0};
     point3 const lookat{0.0, 0.0, 0.0};
     vec3 const vertical_up{0.0, 1.0, 0.0};
     auto const vertical_fov_degree = FieldOfView{20.0};
     auto const aperture = Aperture{0.1};
     auto const focus_distance = FocusDistance{10.0};
-    double time0 = 0.0;
-    double time1 = 1.0;
-    Camera const cam{lookfrom,
-                     lookat,
-                     vertical_up,
-                     vertical_fov_degree,
-                     AspectRatio{aspect_ratio},
-                     aperture,
-                     focus_distance,
-                     time0,
-                     time1};
+    double const time0 = 0.0;
+    double const time1 = 1.0;
+
+    return {random_scene(),
+            Camera{lookfrom,
+                    lookat,
+                    vertical_up,
+                    vertical_fov_degree,
+                    AspectRatio{aspect_ratio},
+                    aperture,
+                    focus_distance,
+                    time0,
+                    time1}};
+}
+
+int main() {
+    // Image
+    int const image_width = 600;
+    int const image_height = static_cast<int>(image_width / aspect_ratio);
+    int const samples_per_pixel = 5;
+    int const max_depth = 5;
+
+    // World and camera
+    auto const scene = select_scene(SceneID::random_spheres);
+    auto const world = BvhNode(scene.world, TimeInterval{0.0, 1.0});
+    auto const camera = scene.camera;
 
     // Render
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
@@ -126,7 +141,7 @@ int main() {
             for (int s = 0; s < samples_per_pixel; ++s) {
                 auto w = (i + random_double()) / (image_width - 1);
                 auto h = (j + random_double()) / (image_height - 1);
-                Ray r = cam.get_ray(w, h);
+                Ray r = camera.get_ray(w, h);
                 pixel_color += ray_color(r, world, max_depth);
             }
 

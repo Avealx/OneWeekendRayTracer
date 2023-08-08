@@ -22,6 +22,7 @@ endfunction()
 
 setup_test(aabb.test.cpp)
 setup_test(bvh.test.cpp)
+setup_test(crtp_functionality.test.cpp)
 setup_test(main.test.cpp)
 setup_test(material.test.cpp)
 setup_test(camera.test.cpp)

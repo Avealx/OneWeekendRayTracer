@@ -1,32 +1,13 @@
 #pragma once
 
 #include <common.hpp>
+#include <crtp_functionality.hpp>
 
 #include <array>
 #include <cmath>
 #include <iostream>
 #include <string>
 #include <sstream>
-
-
-template <class Base>
-struct inject_trivial_begin_end {
-    auto  begin()       { return reinterpret_cast<typename Base::      iterator>(this); }
-    auto  begin() const { return reinterpret_cast<typename Base::const_iterator>(this); }
-    auto cbegin() const { return reinterpret_cast<typename Base::const_iterator>(this); }
-
-    auto  end()       { return reinterpret_cast<typename Base::      iterator>(static_cast<Base       *>(this) + 1); }
-    auto  end() const { return reinterpret_cast<typename Base::const_iterator>(static_cast<Base const *>(this) + 1); }
-    auto cend() const { return reinterpret_cast<typename Base::const_iterator>(static_cast<Base const *>(this) + 1); }
-};
-
-
-// requires Base implementing concept `iterable` (begin())
-template<class Base>
-struct inject_trivial_indexing {
-    auto& operator[](std::size_t index)       { return *(static_cast<Base       *>(this)->begin() + index); }
-    auto  operator[](std::size_t index) const { return *(static_cast<Base const *>(this)->begin() + index); }
-};
 
 
 struct vec3 : inject_trivial_begin_end<vec3>

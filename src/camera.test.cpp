@@ -12,12 +12,12 @@ using testing::Lt;
 using testing::Ne;
 
 
-TEST(camera, can_be_created) {
-    camera{};
+TEST(Camera, can_be_created) {
+    Camera{};
 }
 
-// A camera derivative that allows to access the internals for testing purposes.
-struct TestableCamera : public camera {
+// A Camera derivative that allows to access the internals for testing purposes.
+struct TestableCamera : public Camera {
     TestableCamera(
         point3 const lookfrom = vec3{0.0, 0.0, 0.0},
         point3 const lookat = vec3{0.0, 0.0, -1.0},
@@ -28,7 +28,7 @@ struct TestableCamera : public camera {
         FocusDistance const focus_dist = FocusDistance{1.0},
         double const time0 = 0.5,
         double const time1 = 1.0
-    ) : camera{lookfrom,
+    ) : Camera{lookfrom,
                lookat,
                vertical_up,
                vertical_fov_degree,
@@ -41,11 +41,11 @@ struct TestableCamera : public camera {
     TestableCamera(
         FieldOfView const vertical_fov_degree,
         AspectRatio const aspect_ratio
-    ) : camera{ point3{0.0, 0.0, 0.0}, point3{0.0, 0.0, -1.0}, vec3{0.0, 1.0, 0.0}, vertical_fov_degree, aspect_ratio} {}
+    ) : Camera{ point3{0.0, 0.0, 0.0}, point3{0.0, 0.0, -1.0}, vec3{0.0, 1.0, 0.0}, vertical_fov_degree, aspect_ratio} {}
 
-    using camera::lower_left_corner_;
-    using camera::time0_;
-    using camera::time1_;
+    using Camera::lower_left_corner_;
+    using Camera::time0_;
+    using Camera::time1_;
 };
 
 // TODO: make proper matcher
@@ -57,14 +57,14 @@ void expect_double_equal(vec3 const & u, vec3 const & v) {
 
 // TODO: after adding the next test, I cannot give only these two fields to the ctor.
 //       think about how to do this nicely and then continue at linsting 64
-TEST(camera, can_be_created_using_vertical_field_of_view_and_aspect_ratio) {
+TEST(Camera, can_be_created_using_vertical_field_of_view_and_aspect_ratio) {
     FieldOfView const vertical_fov_deg{90.0};
     AspectRatio const aspect_ratio{2.0};
     TestableCamera cam{vertical_fov_deg, aspect_ratio};
     expect_double_equal(cam.lower_left_corner_, vec3{-2.0, -1.0, -1.0});
 }
 
-TEST(camera, can_be_positioned) {
+TEST(Camera, can_be_positioned) {
     point3 const lookfrom{0.0, 1.0, 0.0};
     point3 const lookat{0.0, 0.0, 0.0};
     vec3 const vertical_up{0.0, 0.0, -1.0};
@@ -74,11 +74,11 @@ TEST(camera, can_be_positioned) {
     expect_double_equal(cam.lower_left_corner_, vec3{-2.0, 0.0, 1.0});
 }
 
-TEST(camera, ray_to_center_of_image_is_correct) {
-    EXPECT_THAT(camera{}.get_ray(0.5, 0.5), Eq(Ray{{0.0,0.0,0.0}, {0.0, 0.0, -1.0}}));
+TEST(Camera, ray_to_center_of_image_is_correct) {
+    EXPECT_THAT(Camera{}.get_ray(0.5, 0.5), Eq(Ray{{0.0,0.0,0.0}, {0.0, 0.0, -1.0}}));
 }
 
-TEST(camera, ray_to_center_of_image_has_random_origin_according_to_aperture) {
+TEST(Camera, ray_to_center_of_image_has_random_origin_according_to_aperture) {
     point3 const lookfrom = vec3{0.0, 0.0, 0.0};
     point3 const lookat = vec3{0.0, 0.0, -1.0};
     point3 const vertical_up = vec3{0.0, 1.0, 0.0};
@@ -86,7 +86,7 @@ TEST(camera, ray_to_center_of_image_has_random_origin_according_to_aperture) {
     auto const aspect_ratio = AspectRatio{16.0 / 9.0};
     auto const aperture = Aperture{2.0};
     auto const focus_dist = FocusDistance{10.0};
-    camera const cam{lookfrom,
+    Camera const cam{lookfrom,
                      lookat,
                      vertical_up,
                      vertical_fov_degree,
@@ -101,7 +101,7 @@ TEST(camera, ray_to_center_of_image_has_random_origin_according_to_aperture) {
     EXPECT_THAT((r1.o - r2.o).length(), Lt(aperture.value()));
 }
 
-TEST(camera, emits_ray_with_time_inside_cameras_time_bounds) {
+TEST(Camera, emits_ray_with_time_inside_cameras_time_bounds) {
     TestableCamera const cam{};
     auto const ray = cam.get_ray(0.5, 0.5);
     EXPECT_THAT(ray.time(), AllOf(Ge(cam.time0_), Lt(cam.time1_)));

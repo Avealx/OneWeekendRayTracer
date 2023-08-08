@@ -106,7 +106,7 @@ int main() {
     auto const focus_distance = FocusDistance{10.0};
     double time0 = 0.0;
     double time1 = 1.0;
-    camera const cam{lookfrom,
+    Camera const cam{lookfrom,
                      lookat,
                      vertical_up,
                      vertical_fov_degree,

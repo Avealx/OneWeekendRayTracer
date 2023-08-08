@@ -12,9 +12,9 @@ using AspectRatio = StrongType<double, struct AspectRatioTag>;
 using Aperture = StrongType<double, struct ApertureTag>;
 using FocusDistance = StrongType<double, struct FocusDistanceTag>;
 
-class camera {
+class Camera {
 public:
-    camera(
+    Camera(
         point3 const lookfrom = point3{0.0, 0.0, 0.0},
         point3 const lookat = point3{0.0, 0.0, -1.0},
         point3 const vertical_up = vec3{0.0, 1.0, 0.0},

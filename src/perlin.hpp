@@ -40,6 +40,16 @@ public:
         return result;
     }
 
+    double turbulence(vec3 const & p, double const depth = 7.0) const {
+        auto accum = 0.0;
+        auto q = p;
+        auto weight = 1.0;
+        for (std::size_t ii = 0; ii < depth; ++ii, weight *= 0.5, q *= 2.0)
+            accum += weight * (*this)(q);
+
+        return std::abs(accum);
+    }
+
 private:
     // functions
     static double interpolant(double const r) {

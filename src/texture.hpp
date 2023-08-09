@@ -60,7 +60,9 @@ struct NoiseTexture : TextureI {
     // TextureI
     color value(TextureCoordinates2d const uv, point3 const & p) const override {
         // return color(1.0, 1.0, 1.0) * std::abs(noise(scale * p));
-        return color(1.0, 1.0, 1.0) * (1.0 + noise(scale * p)) * 0.5;
+        // return color(1.0, 1.0, 1.0) * (1.0 + noise(p)) * 0.5;
+        // return color(1.0, 1.0, 1.0) * (1.0 + noise(scale * p)) * 0.5;
+        return color(1.0, 1.0, 1.0) * noise.turbulence(scale * p);
     }
 
     Perlin noise;

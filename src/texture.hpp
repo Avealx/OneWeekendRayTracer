@@ -62,7 +62,8 @@ struct NoiseTexture : TextureI {
         // return color(1.0, 1.0, 1.0) * std::abs(noise(scale * p));
         // return color(1.0, 1.0, 1.0) * (1.0 + noise(p)) * 0.5;
         // return color(1.0, 1.0, 1.0) * (1.0 + noise(scale * p)) * 0.5;
-        return color(1.0, 1.0, 1.0) * noise.turbulence(scale * p);
+        // return color(1.0, 1.0, 1.0) * noise.turbulence(scale * p);
+        return color(1.0, 1.0, 1.0) * 0.5 * (1.0 + std::sin(scale * p.z + 10.0 * noise.turbulence(p)));
     }
 
     Perlin noise;

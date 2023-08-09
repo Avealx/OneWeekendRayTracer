@@ -161,7 +161,7 @@ int main() {
     // Image
     int const image_width = 600;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 50;
+    int const samples_per_pixel = 500;
     int const max_depth = 5;
 
     // World and camera

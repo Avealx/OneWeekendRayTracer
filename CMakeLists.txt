@@ -7,4 +7,10 @@ include(CTest)
 
 find_package(GTest)
 
+set(EXTERNAL_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/external")
+
+set(DATA_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/data")
+
 add_subdirectory("src")

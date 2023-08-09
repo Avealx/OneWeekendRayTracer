@@ -88,6 +88,15 @@ hittable_list two_perlin_spheres() {
     return world;
 }
 
+hittable_list planet() {
+    hittable_list world;
+
+    auto earth_texture = std::make_shared<ImageTexture>(std::string{DATA_PATH "/earthmap.jpg"});
+    world.add(std::make_shared<Sphere>(point3{0.0, 0.0, 0.0}, 2.0, std::make_shared<lambertian>(earth_texture)));
+
+    return world;
+}
+
 color ray_color(Ray const & r, hittable_I const & world, int depth) {
     if (depth <= 0)
         return color{0.0, 0.0, 0.0};
@@ -112,6 +121,7 @@ enum class SceneID {
     random_spheres,
     two_spheres,
     two_perlin_spheres,
+    planet,
 };
 
 struct Scene {
@@ -143,6 +153,9 @@ Scene select_scene(SceneID const id)
     case SceneID::two_perlin_spheres:
         world = two_perlin_spheres();
         break;
+    case SceneID::planet:
+        world = planet();
+        break;
     }
 
     return {world,
@@ -161,12 +174,11 @@ int main() {
     // Image
     int const image_width = 600;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 500;
+    int const samples_per_pixel = 50;
     int const max_depth = 5;
 
     // World and camera
-    auto const scene = select_scene(SceneID::two_perlin_spheres);
-    // auto const scene = select_scene(SceneID::two_spheres);
+    auto const scene = select_scene(SceneID::planet);
     auto const world = BvhNode(scene.world, TimeInterval{0.0, 1.0});
     auto const camera = scene.camera;
 

@@ -1,5 +1,11 @@
 add_executable(main main.cpp)
-target_include_directories(main PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(main
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${EXTERNAL_PATH})
+target_compile_definitions(main
+    PRIVATE
+    DATA_PATH="${DATA_PATH}")
 
 function(setup_test target_filepath)
     # Simplify adding a new test.
@@ -16,7 +22,13 @@ function(setup_test target_filepath)
 
     add_executable(${target_name} ${target_filepath})
     target_link_libraries(${target_name} ${test_libraries})
-    target_include_directories(${target_name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    target_include_directories(${target_name}
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${EXTERNAL_PATH})
+    target_compile_definitions(${target_name}
+        PRIVATE
+        DATA_PATH="${DATA_PATH}")
     add_test(NAME ${target_name} COMMAND ${target_name})
 endfunction()
 

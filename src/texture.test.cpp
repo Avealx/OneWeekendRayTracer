@@ -4,7 +4,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <string>
 
+using testing::DoubleEq;
 using testing::Eq;
 using testing::Ne;
 using testing::Test;
@@ -33,6 +35,22 @@ TEST(SolidColor, returns_correct_value) {
  EXPECT_THAT(SolidColor{value}.value({}, {}), Eq(value));
 }
 
+struct AnImageTexture : Test {
+    ImageTexture const texture{std::string{DATA_PATH "/test_image_RGB8_10x10_R33_G64_B128_.png"}};
+};
+
+// TODO: make proper matcher
+void expect_double_equal(color const & u, color const & v) {
+    EXPECT_THAT(u.x, DoubleEq(v.x));
+    EXPECT_THAT(u.y, DoubleEq(v.y));
+    EXPECT_THAT(u.z, DoubleEq(v.z));
+}
+
+TEST_F(AnImageTexture, retrieves_the_correct_color) {
+    color const expected_color{33.0 / 255.0, 64.0 / 255.0, 128.0 / 255.0};
+    expect_double_equal(texture.value(TextureCoordinates2d{0.5, 0.5}, point3{}),
+                        expected_color);
+}
 
 int main(int argc, char **argv)
 {

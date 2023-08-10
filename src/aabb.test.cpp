@@ -8,6 +8,12 @@ using testing::Eq;
 using testing::Test;
 
 
+TEST(AabbBounds, length_is_component_wise) {
+    AabbBounds const bounds{vec3{0.0, 0.0, 0.0}, vec3{1.0, 2.0, 3.0}};
+    auto const side_lengths = bounds.length();
+    EXPECT_THAT(side_lengths, Eq(bounds.max - bounds.min));
+}
+
 TEST(Aabb, can_be_created) {
     Aabb const aabb{AabbBounds{vec3{0.0, 0.0, 0.0}, vec3{1.0, 1.0, 1.0}}};
 }
@@ -74,6 +80,23 @@ TEST_F(AnAabb, can_be_joined_with_another) {
     EXPECT_THAT(surrounding_aabb.min(), Eq(min));
     EXPECT_THAT(surrounding_aabb.max(), Eq(2.0 * max));
 }
+
+
+TEST(Aabb, can_be_padded_selectively) {
+    vec3 const min{0.0, 1.0, 2.0};
+    vec3 const max{0.0, 2.0, 3.0};
+    Aabb const aabb{AabbBounds{min, max}};
+    double const delta = 0.25;
+    Aabb const expanded = aabb.ensure_width(delta);
+
+    EXPECT_THAT(aabb.min().x - expanded.min().x, Eq(0.5 * delta));
+    EXPECT_THAT(expanded.max().x - aabb.max().x, Eq(0.5 * delta));
+    EXPECT_THAT(aabb.min().y, Eq(expanded.min().y));
+    EXPECT_THAT(aabb.max().y, Eq(expanded.max().y));
+    EXPECT_THAT(aabb.min().z, Eq(expanded.min().z));
+    EXPECT_THAT(aabb.max().z, Eq(expanded.max().z));
+}
+
 
 int main(int argc, char **argv)
 {

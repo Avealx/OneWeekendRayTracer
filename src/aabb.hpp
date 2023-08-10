@@ -8,6 +8,11 @@
 
 using AabbBounds = TypedInterval<vec3, struct AabbBoundsTag>;
 
+template <>
+struct TypedIntervalTraits<vec3, struct AabbBoundsTag> {
+    static vec3 length(vec3 const & difference) { return difference; }
+};
+
 class Aabb {
 public:
     explicit Aabb(AabbBounds const & bounds) : bounds_{bounds} {}
@@ -21,6 +26,20 @@ public:
         return bounds_.min.x <= bounds_.max.x &&
                bounds_.min.y <= bounds_.max.y &&
                bounds_.min.z <= bounds_.max.z;
+    }
+
+    Aabb pad() const { return ensure_width(0.0001); }
+
+    Aabb ensure_width(double const delta) const {
+        vec3 const widths = bounds_.length();
+        AabbBounds const bounds = {
+            vec3{widths.x < delta ? bounds_.min.x - 0.5 * delta : bounds_.min.x,
+                 widths.y < delta ? bounds_.min.y - 0.5 * delta : bounds_.min.y,
+                 widths.z < delta ? bounds_.min.z - 0.5 * delta : bounds_.min.z },
+            vec3{widths.x < delta ? bounds_.max.x + 0.5 * delta : bounds_.max.x,
+                 widths.y < delta ? bounds_.max.y + 0.5 * delta : bounds_.max.y,
+                 widths.z < delta ? bounds_.max.z + 0.5 * delta : bounds_.max.z }};
+        return Aabb{bounds};
     }
 
 private:

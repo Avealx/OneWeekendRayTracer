@@ -1,6 +1,6 @@
 #pragma once
 
-#include <common.hpp>
+#include <interval.hpp>
 #include <ray.hpp>
 #include <vec3.hpp>
 

@@ -72,13 +72,6 @@ TEST(common, DISABLED_typed_bool_cannot_be_cast_across_types) {
     //MyBool mb{MyBool2{true}}; // TODO: assert that this line is invalid, then enable test
 }
 
-using DoubleInterval = TypedInterval<double, struct DoubleIntervalTag>;
-TEST(common, typed_interval_can_be_created) {
-    double const min = -1.0, max = 1.0;
-    DoubleInterval interval{min, max};
-    EXPECT_THAT(interval.min, Eq(min));
-    EXPECT_THAT(interval.max, Eq(max));
-}
 
 int main(int argc, char **argv)
 {

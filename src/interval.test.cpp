@@ -7,28 +7,50 @@
 
 
 using testing::Eq;
+using testing::Test;
 
 
 using DoubleInterval = TypedInterval<double, struct DoubleIntervalTag>;
+using Vec3Interval   = TypedInterval<vec3,   struct Vec3IntervalTag>;
 
-TEST(TypedInterval, can_be_created) {
+struct ADoubleInterval : Test {
     double const min = -1.0, max = 1.0;
-    DoubleInterval interval{min, max};
+    DoubleInterval const interval{min, max};
+};
+
+struct AVec3Interval : Test {
+    vec3 const min{1.0, 1.0, 1.0};
+    vec3 const max{1.0, 4.0, 5.0};
+    Vec3Interval const interval{min, max};
+};
+
+TEST_F(ADoubleInterval, can_be_created) {
     EXPECT_THAT(interval.min, Eq(min));
     EXPECT_THAT(interval.max, Eq(max));
 }
 
-TEST(TypedInterval, has_length_for_buildin_types) {
-    DoubleInterval const interval{1.0, 3.0};
-    EXPECT_THAT(interval.length(), Eq(2.0));
+TEST_F(ADoubleInterval, can_be_expanded) {
+    auto const delta = 0.2;
+    auto const expanded = interval.expand(delta);
+    EXPECT_THAT(expanded.min, Eq(min - 0.5 * delta));
+    EXPECT_THAT(expanded.max, Eq(max + 0.5 * delta));
 }
 
-using Vec3Interval = TypedInterval<vec3, struct Vec3IntervalTag>;
-
-TEST(TypedInterval, has_length_for_vec3) {
-    Vec3Interval const interval{vec3{1.0, 1.0, 1.0}, vec3{1.0, 4.0, 5.0}};
-    EXPECT_THAT(interval.length(), Eq(5.0));
+TEST_F(AVec3Interval, can_be_expanded) {
+    auto const delta = 0.2;
+    auto const expanded = interval.expand(vec3{delta});
+    EXPECT_THAT(expanded.min, Eq(min - 0.5 * vec3{delta}));
+    EXPECT_THAT(expanded.max, Eq(max + 0.5 * vec3{delta}));
 }
+
+TEST_F(ADoubleInterval, has_length) {
+    EXPECT_THAT(interval.length(), Eq(max - min));
+}
+
+TEST_F(AVec3Interval, has_length) {
+    EXPECT_THAT(interval.length(), Eq((max - min).length()));
+}
+
 
 int main(int argc, char **argv)
 {

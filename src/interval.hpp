@@ -1,8 +1,14 @@
 #pragma once
 
-template<typename T>
+// We also templatize on the Tag parameter from the TypedInterval class
+// template to allow specializations for the same `Value` type but different
+// `Tag` types. For example in general a vec3 would choose to compute the
+// length via the norm of `difference`. But some TypedInterval<vec3> classes
+// might serve as a container of three values and the length should simply
+// return `difference`, as we want to keep the components separated.
+template<typename Value, class Tag=struct DummyTag>
 struct TypedIntervalTraits {
-    static double length(T const & difference) { return difference; }
+    static double length(Value const & difference) { return difference; }
 };
 
 template <typename Value, class Tag>
@@ -12,13 +18,12 @@ struct TypedInterval {
     explicit TypedInterval() : min{}, max{} {}
     TypedInterval(Value const & min, Value const & max) : min{min}, max{max} {}
 
-    auto length() const { return TypedIntervalTraits<Value>::length(max - min); }
+    auto length() const { return TypedIntervalTraits<Value, Tag>::length(max - min); }
 
     TypedInterval expand(Value const & delta) const {
-        Value const increment = 0.5 * delta;
-        return TypedInterval(min - delta, max + delta);
+        Value const half_delta = 0.5 * delta;
+        return TypedInterval(min - half_delta, max + half_delta);
     }
-
 };
 
 using TimeInterval = TypedInterval<double, struct TimeIntervalTag>;

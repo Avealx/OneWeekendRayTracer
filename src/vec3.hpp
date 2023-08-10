@@ -145,11 +145,11 @@ inline vec3 max_components(vec3 const u, vec3 const v) {
                 std::max(u.z, v.z)};
 }
 
-template<typename T>
+template<typename V, class Tag>
 struct TypedIntervalTraits;
 
-template<>
-struct TypedIntervalTraits<vec3> {
+template<class Tag>
+struct TypedIntervalTraits<vec3, Tag> {
     static double length(vec3 const & difference) { return difference.length(); }
 };
 

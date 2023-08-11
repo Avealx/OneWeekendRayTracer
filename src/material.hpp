@@ -7,12 +7,22 @@
 
 struct ScatterInfo {
     color attenuation;
+    color emitted;
     Ray scattered_ray;
 
+    explicit ScatterInfo(Ray const scattered_ray = Ray{},
+                         color const attenuation = color{0.0},
+                         color const emitted = color{0.0})
+        : scattered_ray{scattered_ray}, attenuation{attenuation}, emitted{emitted} {}
+
     static ScatterInfo const & miss() {
-        static ScatterInfo the_miss{color{std::numeric_limits<double>::lowest()}, Ray{}};
+        static ScatterInfo the_miss{Ray{},
+                                    color{std::numeric_limits<double>::lowest()},
+                                    color{std::numeric_limits<double>::lowest()}};
         return the_miss;
     }
+
+    static color default_emitted_color() { return color{0.0, 0.0, 0.0}; }
 
     explicit operator bool() const { return this != &miss(); }
 };
@@ -33,7 +43,7 @@ public:
         if (scatter_direction.near_zero())
             scatter_direction = hit_rec.normal;
 
-        ScatterInfo result;
+        ScatterInfo result{};
         result.scattered_ray = Ray{hit_rec.p, scatter_direction, ray_in.time()};
         result.attenuation = albedo_->value(hit_rec.uv, hit_rec.p);
         return result;
@@ -55,7 +65,7 @@ public:
         auto const scatter_direction = unit_vector(  reflect(ray_in.d, hit_rec.normal)
                                                    + fuzz_ * random_in_unit_sphere());
 
-        ScatterInfo result;
+        ScatterInfo result{};
         result.scattered_ray = Ray{hit_rec.p, scatter_direction, ray_in.time()};
         result.attenuation = albedo_;
         return result;
@@ -85,7 +95,7 @@ public:
         vec3 const scatter_direction = choose_reflect ? reflect(unit_direction, hit_rec.normal)
                                                       : refract(unit_direction, hit_rec.normal, refraction_ratio);
 
-        ScatterInfo result;
+        ScatterInfo result{};
         result.scattered_ray = Ray{hit_rec.p, scatter_direction, ray_in.time()};
         result.attenuation = color{1.0, 1.0, 1.0};
         return result;

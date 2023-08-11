@@ -19,33 +19,45 @@ using ::testing::Lt;
 using ::testing::Test;
 
 
-TEST(scatter_info, has_attenuation) {
+TEST(ScatterInfo, has_attenuation) {
     EXPECT_THAT(typeid(ScatterInfo{}.attenuation).name(), Eq(typeid(color).name()));
 }
 
-TEST(scatter_info, has_scattered_ray) {
+TEST(ScatterInfo, has_scattered_ray) {
     EXPECT_THAT(typeid(ScatterInfo{}.scattered_ray).name(), Eq(typeid(Ray).name()));
 }
 
-TEST(scatter_info, can_be_cast_to_bool) {
+TEST(ScatterInfo, has_emitted) {
+    EXPECT_THAT(typeid(ScatterInfo{}.emitted).name(), Eq(typeid(color).name()));
+}
+
+TEST(ScatterInfo, has_reasonable_defaults) {
+    EXPECT_THAT(ScatterInfo{}.attenuation, Eq(color{0.0, 0.0, 0.0}));
+    EXPECT_THAT(ScatterInfo{}.emitted,     Eq(color{0.0, 0.0, 0.0}));
+}
+
+TEST(ScatterInfo, can_be_cast_to_bool) {
     EXPECT_FALSE(ScatterInfo::miss());
     EXPECT_TRUE(ScatterInfo{});
 }
 
+
 struct mock_material : MaterialI {
-    static color mock_color() { return {1.0, 0.1, 0.01}; }
+    static color mock_attenuation() { return {1.0, 0.1, 0.01}; }
+    static color mock_emission() { return {2.0, 3.0, 4.0}; }
     static Ray   mock_ray() { return Ray{point3{1.0, 2.0, 3.0}, vec3{3.0, 2.0, 1.0}}; }
 
     ScatterInfo scatter(Ray const & ray_in, HitRecord const & hit_rec) const override {
-        return {mock_color(), mock_ray()};
+        return ScatterInfo{mock_ray(), mock_attenuation(), mock_emission()};
     }
 };
 
 TEST(material, has_scatter_returning_ScatterInfo) {
     std::unique_ptr<MaterialI> material_ptr = std::make_unique<mock_material>();
     auto scatter_info = material_ptr->scatter(Ray{point3{0.0, 0.0, 0.0}, vec3{1.0, 1.0, 1.0}}, HitRecord{});
-    EXPECT_THAT(scatter_info.attenuation,   Eq(mock_material::mock_color()));
+    EXPECT_THAT(scatter_info.attenuation,   Eq(mock_material::mock_attenuation()));
     EXPECT_THAT(scatter_info.scattered_ray, Eq(mock_material::mock_ray()));
+    EXPECT_THAT(scatter_info.emitted,       Eq(mock_material::mock_emission()));
 }
 
 //---------------------------------------------------------------------materials

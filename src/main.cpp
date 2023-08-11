@@ -116,7 +116,32 @@ hittable_list quads() {
     return world;
 }
 
-color ray_color(Ray const & r, HittableI const & world, int depth) {
+hittable_list simple_light() {
+    hittable_list world = two_perlin_spheres();
+
+    auto diffuse_light = std::make_shared<DiffuseLight>(color(4.0, 4.0, 4.0));
+    world.add(std::make_shared<Sphere>(point3(0.0, 7.0, 0.0), 2.0, diffuse_light));
+    world.add(std::make_shared<Quad>(point3{3.0, 1.0, -2.0}, vec3{2.0, 0.0, 0.0}, vec3{0.0, 2.0, 0.0}, diffuse_light));
+
+    return world;
+}
+
+using BackgroundFunction = std::function<color(Ray const &)>;
+
+color default_background(Ray const & ray) {
+    vec3 const unit_direction = unit_vector(ray.d);
+    auto t = 0.5 * (unit_direction.y + 1.0);
+    return (1.0 - t) * color{1.0, 1.0, 1.0} + t * color{0.5, 0.7, 1.0};
+}
+
+color black_background(Ray const &){
+    return color{0.0};
+}
+
+color ray_color(Ray const & r,
+                HittableI const & world,
+                int depth,
+                BackgroundFunction const & background_color) {
     if (depth <= 0)
         return color{0.0, 0.0, 0.0};
 
@@ -124,16 +149,15 @@ color ray_color(Ray const & r, HittableI const & world, int depth) {
     if (rec) {
         auto const scatter_info = rec.material_ptr->scatter(r, rec);
         if (scatter_info)
-            return scatter_info.attenuation * ray_color(scatter_info.scattered_ray,
-                                                        world,
-                                                        depth - 1);
-        return color(0.0, 0.0, 0.0);
+            return scatter_info.emitted + scatter_info.attenuation * ray_color(scatter_info.scattered_ray,
+                                                                               world,
+                                                                               depth - 1,
+                                                                               background_color);
+        return scatter_info.emitted;
     }
 
     // background
-    vec3 const unit_direction = unit_vector(r.d);
-    auto t = 0.5 * (unit_direction.y + 1.0);
-    return (1.0 - t) * color{1.0, 1.0, 1.0} + t * color{0.5, 0.7, 1.0};
+    return background_color(r);
 }
 
 enum class SceneID {
@@ -142,22 +166,25 @@ enum class SceneID {
     two_perlin_spheres,
     planet,
     quads,
+    simple_light,
 };
 
 struct Scene {
     hittable_list world;
+    BackgroundFunction background_color;
     Camera camera;
 };
 
 Scene select_scene(SceneID const id)
 {
-    point3 const lookat{0.0, 0.0, 0.0};
     vec3 const vertical_up{0.0, 1.0, 0.0};
     auto const focus_distance = FocusDistance{10.0};
     double const time0 = 0.0;
     double const time1 = 1.0;
+    BackgroundFunction background_color = default_background;
 
     point3 lookfrom{13.0, 2.0, 3.0};
+    point3 lookat{0.0, 0.0, 0.0};
     auto vertical_fov_degree = FieldOfView{20.0};
     Aperture aperture{0.0};
     hittable_list world;
@@ -181,9 +208,16 @@ Scene select_scene(SceneID const id)
         vertical_fov_degree = FieldOfView{80};
         lookfrom = point3{0.0, 0.0, 9.0};
         break;
+    case SceneID::simple_light:
+        world = simple_light();
+        lookfrom = point3{26.0, 3.0, 6.0};
+        lookat = point3{0.0, 2.0, 0.0};
+        background_color = black_background;
+        break;
     }
 
     return {world,
+            background_color,
             Camera{lookfrom,
                    lookat,
                    vertical_up,
@@ -197,13 +231,13 @@ Scene select_scene(SceneID const id)
 
 int main() {
     // Image
-    int const image_width = 600;
+    int const image_width = 1200;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 500;
+    int const samples_per_pixel = 50;
     int const max_depth = 5;
 
     // World and camera
-    auto const scene = select_scene(SceneID::quads);
+    auto const scene = select_scene(SceneID::simple_light);
     auto const world = BvhNode(scene.world, TimeInterval{0.0, 1.0});
     auto const camera = scene.camera;
 
@@ -221,7 +255,7 @@ int main() {
                     auto w = (i + random_double()) / (image_width - 1);
                     auto h = (j + random_double()) / (image_height - 1);
                     Ray r = camera.get_ray(w, h);
-                    pixel_color += ray_color(r, world, max_depth);
+                    pixel_color += ray_color(r, world, max_depth, scene.background_color);
                 }
 
                 write_color(std::cout,

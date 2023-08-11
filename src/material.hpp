@@ -110,3 +110,18 @@ private:
         return r0_squared + (1 - r0_squared) * std::pow((1.0 - cos), 5.0);
     }
 };
+
+class DiffuseLight : public MaterialI {
+public:
+    DiffuseLight(color const & c) : emitter_{std::make_shared<SolidColor>(c)} {}
+    DiffuseLight(std::shared_ptr<TextureI> texture) : emitter_{texture} {}
+
+    // MaterialI
+    ScatterInfo scatter(Ray const & ray_in, HitRecord const & hit_rec) const override {
+        ScatterInfo result{ScatterInfo::miss()};
+        result.emitted = emitter_->value(hit_rec.uv, hit_rec.p);
+        return result;
+    }
+private:
+    std::shared_ptr<TextureI> emitter_;
+};

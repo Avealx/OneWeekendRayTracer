@@ -207,6 +207,22 @@ TEST_F(a_dielectric_material, stores_the_correct_hit_time) {
     EXPECT_THAT(scatter_info.scattered_ray.time(), Eq(hit_time));
 };
 
+struct ADiffuseLight : Test {
+    color const  light_color{2.0, 2.0, 3.0};
+    HitRecord const hit_record{};
+    Ray const ray{};
+    DiffuseLight const light{light_color};
+};
+
+TEST_F(ADiffuseLight, does_not_scatter) {
+    auto scatter_info = light.scatter(ray, hit_record);
+    EXPECT_FALSE(scatter_info);
+}
+
+TEST_F(ADiffuseLight, has_correct_emitted_color) {
+    auto scatter_info = light.scatter(ray, hit_record);
+    EXPECT_THAT(scatter_info.emitted, Eq(light_color));
+}
 
 
 int main(int argc, char **argv)
@@ -214,4 +230,3 @@ int main(int argc, char **argv)
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
-

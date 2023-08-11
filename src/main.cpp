@@ -126,6 +126,25 @@ hittable_list simple_light() {
     return world;
 }
 
+hittable_list cornell_box() {
+    hittable_list world;
+
+    auto red   = std::make_shared<lambertian>(color{0.65, 0.05, 0.05});
+    auto white = std::make_shared<lambertian>(color{0.73, 0.73, 0.73});
+    auto green = std::make_shared<lambertian>(color{0.12, 0.45, 0.15});
+    auto light = std::make_shared<DiffuseLight>(color{15.0, 15.0, 15.0});
+
+    world.add(std::make_shared<Quad>(point3(555.0,   0.0,   0.0), vec3(0,555,0), vec3(0,0,555), green));
+    world.add(std::make_shared<Quad>(point3(  0.0,   0.0,   0.0), vec3(0,555,0), vec3(0,0,555), red));
+    world.add(std::make_shared<Quad>(point3(343.0, 553.0, 332.0), vec3(-130,0,0), vec3(0,0,-105), light));
+    world.add(std::make_shared<Quad>(point3(  0.0,   0.0,   0.0), vec3(555,0,0), vec3(0,0,555), white));
+    world.add(std::make_shared<Quad>(point3(  0.0, 555.0,   0.0), vec3(555,0,0), vec3(0,0,555), white));  // top
+    world.add(std::make_shared<Quad>(point3(  0.0,   0.0, 555.0), vec3(555,0,0), vec3(0,555,0), white));  // back
+    // world.add(std::make_shared<Quad>(point3(  0.0,   0.0, 555.0), vec3(555,0,0), vec3(0,555,0), light));  // back
+
+    return world;
+}
+
 using BackgroundFunction = std::function<color(Ray const &)>;
 
 color default_background(Ray const & ray) {
@@ -167,6 +186,7 @@ enum class SceneID {
     planet,
     quads,
     simple_light,
+    cornell_box,
 };
 
 struct Scene {
@@ -205,13 +225,20 @@ Scene select_scene(SceneID const id)
         break;
     case SceneID::quads:
         world = quads();
-        vertical_fov_degree = FieldOfView{80};
+        vertical_fov_degree = FieldOfView{80.0};
         lookfrom = point3{0.0, 0.0, 9.0};
         break;
     case SceneID::simple_light:
         world = simple_light();
         lookfrom = point3{26.0, 3.0, 6.0};
         lookat = point3{0.0, 2.0, 0.0};
+        background_color = black_background;
+        break;
+    case SceneID::cornell_box:
+        world = cornell_box();
+        vertical_fov_degree = FieldOfView{40.0};
+        lookfrom = point3{278.0, 278.0, -800};
+        lookat = point3{278.0, 278.0, 0.0};
         background_color = black_background;
         break;
     }
@@ -231,13 +258,13 @@ Scene select_scene(SceneID const id)
 
 int main() {
     // Image
-    int const image_width = 1200;
+    int const image_width = 600;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 50;
-    int const max_depth = 5;
+    int const samples_per_pixel = 5000;
+    int const max_depth = 50;
 
     // World and camera
-    auto const scene = select_scene(SceneID::simple_light);
+    auto const scene = select_scene(SceneID::cornell_box);
     auto const world = BvhNode(scene.world, TimeInterval{0.0, 1.0});
     auto const camera = scene.camera;
 

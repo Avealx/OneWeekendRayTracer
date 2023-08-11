@@ -13,7 +13,7 @@
 
 class MaterialI;
 
-enum class FaceSide {front, back, miss /*indicates a miss hit_record*/};
+enum class FaceSide {front, back, miss /*indicates a miss HitRecord*/};
 
 std::string toString(FaceSide const side) {
     switch(side) {
@@ -24,7 +24,7 @@ std::string toString(FaceSide const side) {
     return "INVALID SIDE";
 }
 
-struct hit_record {
+struct HitRecord {
     point3 p;
     vec3 normal;
     std::shared_ptr<MaterialI> material_ptr;
@@ -34,8 +34,8 @@ struct hit_record {
 
     explicit operator bool() const { return side != FaceSide::miss; }
 
-    static hit_record miss() {
-        return hit_record{{}, {}, nullptr, std::numeric_limits<double>::quiet_NaN(), {}, FaceSide::miss};
+    static HitRecord miss() {
+        return HitRecord{{}, {}, nullptr, std::numeric_limits<double>::quiet_NaN(), {}, FaceSide::miss};
     }
 
     void set_face_normal(Ray const & r, vec3 const & outward_normal) {
@@ -44,7 +44,7 @@ struct hit_record {
     }
 };
 
-std::ostream& operator<<(std::ostream& out, hit_record const & hr) {
+std::ostream& operator<<(std::ostream& out, HitRecord const & hr) {
     return out << '(' <<   "p=" << hr.p
                       << ", n=" << hr.normal
                       << ", t=" << hr.t
@@ -52,16 +52,16 @@ std::ostream& operator<<(std::ostream& out, hit_record const & hr) {
                        << ')';
 }
 
-bool operator==(hit_record const & lhs, hit_record const & rhs) {
+bool operator==(HitRecord const & lhs, HitRecord const & rhs) {
     return (!bool{lhs} && !bool{rhs}) ||
            (lhs.p == rhs.p && lhs.normal == rhs.normal && lhs.t == rhs.t);
 }
 
-bool operator!=(hit_record const & lhs, hit_record const & rhs) {
+bool operator!=(HitRecord const & lhs, HitRecord const & rhs) {
     return !(lhs == rhs);
 }
 
 struct HittableI {
-    virtual hit_record hit(Ray const & r, double t_min, double t_max) const = 0;
+    virtual HitRecord hit(Ray const & r, double t_min, double t_max) const = 0;
     virtual Aabb bounding_box(TimeInterval times) const = 0;
 };

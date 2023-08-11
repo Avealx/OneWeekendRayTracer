@@ -14,9 +14,9 @@ struct mock_hittable : HittableI {
         : distance{distance}
         , aabb_position{aabb_position} {}
 
-    hit_record hit(Ray const & r, double t_min, double t_max) const override {
-        return distance < t_max ? hit_record{point3{0.0}, vec3{0.0}, nullptr, distance, {} /*tex crd*/, FaceSide::front}
-                                : hit_record::miss();
+    HitRecord hit(Ray const & r, double t_min, double t_max) const override {
+        return distance < t_max ? HitRecord{point3{0.0}, vec3{0.0}, nullptr, distance, {} /*tex crd*/, FaceSide::front}
+                                : HitRecord::miss();
     }
 
     Aabb bounding_box(TimeInterval times) const override {

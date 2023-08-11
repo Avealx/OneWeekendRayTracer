@@ -65,11 +65,11 @@ TEST_F(a_sphere, has_correct_uv_coordinates) {
 }
 
 TEST_F(a_sphere_and_missing_ray, hit_misses) {
-    EXPECT_THAT(s.hit(r, 0.0, 10.0), Eq(hit_record::miss()));
+    EXPECT_THAT(s.hit(r, 0.0, 10.0), Eq(HitRecord::miss()));
 }
 
 TEST_F(a_sphere_and_tangential_ray, hit_sphere_hits) {
-    hit_record const expected_hit_record{point3{1.0, 0.0, 0.0}, vec3{-1.0, 0.0, 0.0}, nullptr, 5.0, {} /*tex crd*/, FaceSide::back};
+    HitRecord const expected_hit_record{point3{1.0, 0.0, 0.0}, vec3{-1.0, 0.0, 0.0}, nullptr, 5.0, {} /*tex crd*/, FaceSide::back};
     EXPECT_THAT(s.hit(r, 0.0, 10.0), Eq(expected_hit_record));
 }
 

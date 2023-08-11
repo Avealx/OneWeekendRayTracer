@@ -23,7 +23,7 @@ struct MovingSphere : HittableI {
     vec3 center(double const time) const;
 
     // HittableI
-    hit_record hit(Ray const & r, double t_min, double t_max) const override;
+    HitRecord hit(Ray const & r, double t_min, double t_max) const override;
     Aabb bounding_box(TimeInterval times) const override;
 };
 
@@ -31,7 +31,7 @@ inline vec3 MovingSphere::center(double const time) const {
     return c0 + (time - t0) / (t1 - t0) * (c1 - c0);
 }
 
-inline hit_record MovingSphere::hit(Ray const & ray, double t_min, double t_max) const {
+inline HitRecord MovingSphere::hit(Ray const & ray, double t_min, double t_max) const {
     // TODO: unify with Sphere.hit()
     vec3 oc = ray.o - center(ray.t);
     auto a = ray.d.length_squared();
@@ -40,7 +40,7 @@ inline hit_record MovingSphere::hit(Ray const & ray, double t_min, double t_max)
 
     auto discriminant = h*h - a*C;
     if (discriminant < 0)
-        return hit_record::miss();
+        return HitRecord::miss();
 
     // find nearest hit point
     auto sqrtd = sqrt(discriminant);
@@ -48,10 +48,10 @@ inline hit_record MovingSphere::hit(Ray const & ray, double t_min, double t_max)
     if(root < t_min || t_max < root) {
         root = -h + sqrtd / a;
         if(root < t_min || t_max < root)
-            return hit_record::miss();
+            return HitRecord::miss();
     }
 
-    hit_record result;
+    HitRecord result;
     result.t = root;
     result.p = ray.at(result.t);
     vec3 const outward_normal = (result.p - center(ray.t)) / r;

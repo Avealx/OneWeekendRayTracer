@@ -18,13 +18,13 @@ struct Sphere : HittableI {
     : c{c}, r{r}, material_ptr{material_ptr} {}
 
     // HittableI
-    hit_record hit(Ray const & r, double t_min, double t_max) const override;
+    HitRecord hit(Ray const & r, double t_min, double t_max) const override;
     Aabb bounding_box(TimeInterval times) const override;
 
     TextureCoordinates2d get_uv(point3 const p) const;
 };
 
-inline hit_record Sphere::hit(Ray const & ray, double t_min, double t_max) const {
+inline HitRecord Sphere::hit(Ray const & ray, double t_min, double t_max) const {
     // hit distance(s) t along ray r(t) = r.o + t*r.d:
     // (r(t) - s.o)^2 = s.r^2
     // => t^2*<r.d,r.d> + 2t<r.d,r.o-s.c> + <r.o-s.c,r.o-s.c> - s.r^2 = 0
@@ -40,7 +40,7 @@ inline hit_record Sphere::hit(Ray const & ray, double t_min, double t_max) const
 
     auto discriminant = h*h - a*C;
     if (discriminant < 0)
-        return hit_record::miss();
+        return HitRecord::miss();
 
     // find nearest hit point
     auto sqrtd = sqrt(discriminant);
@@ -48,10 +48,10 @@ inline hit_record Sphere::hit(Ray const & ray, double t_min, double t_max) const
     if(root < t_min || t_max < root) {
         root = -h + sqrtd / a;
         if(root < t_min || t_max < root)
-            return hit_record::miss();
+            return HitRecord::miss();
     }
 
-    hit_record result;
+    HitRecord result;
     result.t = root;
     result.p = ray.at(result.t);
     vec3 const outward_normal = (result.p - c) / r;

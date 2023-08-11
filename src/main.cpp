@@ -101,7 +101,7 @@ color ray_color(Ray const & r, HittableI const & world, int depth) {
     if (depth <= 0)
         return color{0.0, 0.0, 0.0};
 
-    hit_record rec = world.hit(r, 1e-3, infinity);
+    HitRecord rec = world.hit(r, 1e-3, infinity);
     if (rec) {
         auto const scatter_info = rec.material_ptr->scatter(r, rec);
         if (scatter_info)

@@ -15,7 +15,7 @@ public:
 
     // HittableI
     Aabb bounding_box(TimeInterval times) const override;
-    hit_record hit(Ray const & r, double t_min, double t_max) const override;
+    HitRecord hit(Ray const & r, double t_min, double t_max) const override;
 
     std::shared_ptr<HittableI> left;
     std::shared_ptr<HittableI> right;
@@ -75,9 +75,9 @@ std::ostream & operator<<(std::ostream & out, Aabb const & aabb) {
     return out << aabb.min() << ", " << aabb.max();
 }
 
-hit_record BvhNode::hit(Ray const & ray, double t_min, double t_max) const {
+HitRecord BvhNode::hit(Ray const & ray, double t_min, double t_max) const {
     if (!aabb.hit(ray, TimeInterval(t_min, t_max)))
-        return hit_record::miss();
+        return HitRecord::miss();
 
     auto const hit_left = left->hit(ray, t_min, t_max);
     auto const hit_right = right->hit(ray, t_min, hit_left ? hit_left.t : t_max);

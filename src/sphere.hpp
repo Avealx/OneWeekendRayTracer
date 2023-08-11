@@ -9,7 +9,7 @@
 #include <iostream>
 #include <memory>
 
-struct Sphere : hittable_I {
+struct Sphere : HittableI {
     vec3 c;
     double r;
     std::shared_ptr<material_I> material_ptr;
@@ -17,7 +17,7 @@ struct Sphere : hittable_I {
     Sphere(vec3 const& c, double r, std::shared_ptr<material_I> material_ptr = nullptr /*TODO: make proper default material*/)
     : c{c}, r{r}, material_ptr{material_ptr} {}
 
-    // hittable_I
+    // HittableI
     hit_record hit(Ray const & r, double t_min, double t_max) const override;
     Aabb bounding_box(TimeInterval times) const override;
 

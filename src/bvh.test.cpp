@@ -23,7 +23,7 @@ TEST(BvhNode, can_be_constructed_from_hittable_list) {
 }
 
 TEST(BvhNode, can_be_constructed_from_hittables) {
-    BvhNode const bvh{std::vector<std::shared_ptr<hittable_I>>{
+    BvhNode const bvh{std::vector<std::shared_ptr<HittableI>>{
                           std::make_shared<Sphere>(vec3{}, 1.0),
                           std::make_shared<Sphere>(vec3{}, 1.0)},
                       TimeInterval{}};

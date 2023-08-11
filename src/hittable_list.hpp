@@ -6,15 +6,15 @@
 #include <memory>
 #include <vector>
 
-struct hittable_list : hittable_I {
+struct hittable_list : HittableI {
     hittable_list() = default;
-    hittable_list(std::shared_ptr<hittable_I> object) { add(object); }
-    hittable_list(std::vector<std::shared_ptr<hittable_I>> const & hittables) : objects{hittables} {}
+    hittable_list(std::shared_ptr<HittableI> object) { add(object); }
+    hittable_list(std::vector<std::shared_ptr<HittableI>> const & hittables) : objects{hittables} {}
 
     void clear() { objects.clear(); }
-    void add(std::shared_ptr<hittable_I> object) { objects.push_back(object); }
+    void add(std::shared_ptr<HittableI> object) { objects.push_back(object); }
 
-    // hittable_I
+    // HittableI
     hit_record hit(Ray const & r, double t_min, double t_max) const override {
         auto closest_record = hit_record::miss();
         closest_record.t = t_max;
@@ -30,7 +30,7 @@ struct hittable_list : hittable_I {
     Aabb bounding_box(TimeInterval times) const override;
 
     // data
-    std::vector<std::shared_ptr<hittable_I>> objects;
+    std::vector<std::shared_ptr<HittableI>> objects;
 };
 
 inline Aabb hittable_list::bounding_box(TimeInterval times) const {

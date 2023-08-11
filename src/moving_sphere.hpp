@@ -6,7 +6,7 @@
 #include <ray.hpp>
 #include <vec3.hpp>
 
-struct MovingSphere : hittable_I {
+struct MovingSphere : HittableI {
     vec3 c0, c1;   // centers at time t0, t1
     double r;      // radius
     double t0, t1; // times
@@ -22,7 +22,7 @@ struct MovingSphere : hittable_I {
 
     vec3 center(double const time) const;
 
-    // hittable_I
+    // HittableI
     hit_record hit(Ray const & r, double t_min, double t_max) const override;
     Aabb bounding_box(TimeInterval times) const override;
 };

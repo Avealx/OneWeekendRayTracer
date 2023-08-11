@@ -9,7 +9,7 @@
 using testing::Eq;
 
 
-struct mock_hittable : hittable_I {
+struct mock_hittable : HittableI {
     mock_hittable(double distance = 0.0, vec3 const aabb_position = vec3{0.0, 0.0, 0.0})
         : distance{distance}
         , aabb_position{aabb_position} {}

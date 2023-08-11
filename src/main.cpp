@@ -97,7 +97,7 @@ hittable_list planet() {
     return world;
 }
 
-color ray_color(Ray const & r, hittable_I const & world, int depth) {
+color ray_color(Ray const & r, HittableI const & world, int depth) {
     if (depth <= 0)
         return color{0.0, 0.0, 0.0};
 

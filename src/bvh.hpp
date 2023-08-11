@@ -6,38 +6,38 @@
 
 #include <algorithm>
 
-struct BvhNode : public hittable_I {
+struct BvhNode : public HittableI {
 public:
     BvhNode() = default;
     BvhNode(hittable_list const & hittables, TimeInterval times);
-    BvhNode(std::vector<std::shared_ptr<hittable_I>> hittables,
+    BvhNode(std::vector<std::shared_ptr<HittableI>> hittables,
             TimeInterval times);
 
-    // hittable_I
+    // HittableI
     Aabb bounding_box(TimeInterval times) const override;
     hit_record hit(Ray const & r, double t_min, double t_max) const override;
 
-    std::shared_ptr<hittable_I> left;
-    std::shared_ptr<hittable_I> right;
+    std::shared_ptr<HittableI> left;
+    std::shared_ptr<HittableI> right;
     Aabb aabb{AabbBounds{vec3{0.0}, vec3{-1.0}}};
 };
 
-// compare hittable_I's bounding_boxes minimum corners along a given axis
+// compare HittableI's bounding_boxes minimum corners along a given axis
 template <int axis>
-inline bool compare_along_axis(std::shared_ptr<hittable_I> const a, std::shared_ptr<hittable_I> const b) {
-    // assume that every hittable_I will return a valid bounding box
+inline bool compare_along_axis(std::shared_ptr<HittableI> const a, std::shared_ptr<HittableI> const b) {
+    // assume that every HittableI will return a valid bounding box
     return a->bounding_box(TimeInterval{}).min()[axis] < b->bounding_box(TimeInterval{}).min()[axis];
 }
 
-inline bool compare_along_x_axis(std::shared_ptr<hittable_I> const a, std::shared_ptr<hittable_I> const b) {
+inline bool compare_along_x_axis(std::shared_ptr<HittableI> const a, std::shared_ptr<HittableI> const b) {
     return compare_along_axis<0>(a, b);
 }
 
-inline bool compare_along_y_axis(std::shared_ptr<hittable_I> const a, std::shared_ptr<hittable_I> const b) {
+inline bool compare_along_y_axis(std::shared_ptr<HittableI> const a, std::shared_ptr<HittableI> const b) {
     return compare_along_axis<1>(a, b);
 }
 
-inline bool compare_along_z_axis(std::shared_ptr<hittable_I> const a, std::shared_ptr<hittable_I> const b) {
+inline bool compare_along_z_axis(std::shared_ptr<HittableI> const a, std::shared_ptr<HittableI> const b) {
     return compare_along_axis<2>(a, b);
 }
 
@@ -48,7 +48,7 @@ inline Aabb BvhNode::bounding_box(TimeInterval times) const {
 inline BvhNode::BvhNode(hittable_list const & hittables, TimeInterval times)
     : BvhNode{hittables.objects, times} {}
 
-inline BvhNode::BvhNode(std::vector<std::shared_ptr<hittable_I>> hittables,
+inline BvhNode::BvhNode(std::vector<std::shared_ptr<HittableI>> hittables,
                         TimeInterval times) {
     if (hittables.empty())
         return;
@@ -67,7 +67,7 @@ inline BvhNode::BvhNode(std::vector<std::shared_ptr<hittable_I>> hittables,
         right = std::make_shared<BvhNode>(std::vector(middle, std::cend(hittables)), times);
     }
 
-    // assume that every hittable_I will return a valid bounding box
+    // assume that every HittableI will return a valid bounding box
     aabb = surrounding_box(left->bounding_box(times), right->bounding_box(times));
 }
 

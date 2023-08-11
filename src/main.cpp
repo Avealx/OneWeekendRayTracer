@@ -6,6 +6,7 @@
 #include <hittable_list.hpp>
 #include <moving_sphere.hpp>
 #include <perlin.hpp>
+#include <quad.hpp>
 #include <ray.hpp>
 #include <sphere.hpp>
 #include <vec3.hpp>
@@ -97,6 +98,24 @@ hittable_list planet() {
     return world;
 }
 
+hittable_list quads() {
+    hittable_list world;
+
+    auto left_red     = std::make_shared<lambertian>(color(1.0, 0.2, 0.2));
+    auto back_green   = std::make_shared<lambertian>(color(0.2, 1.0, 0.2));
+    auto right_blue   = std::make_shared<lambertian>(color(0.2, 0.2, 1.0));
+    auto upper_orange = std::make_shared<lambertian>(color(1.0, 0.5, 0.0));
+    auto lower_teal   = std::make_shared<lambertian>(color(0.2, 0.8, 0.8));
+
+    world.add(std::make_shared<Quad>(point3{-3.0, -2.0, 1.0}, vec3{0.0, 0.0,  4.0}, vec3{0.0, 4.0,  0.0}, left_red));
+    world.add(std::make_shared<Quad>(point3{-2.0, -2.0, 0.0}, vec3{4.0, 0.0,  0.0}, vec3{0.0, 4.0,  0.0}, back_green));
+    world.add(std::make_shared<Quad>(point3{ 3.0, -2.0, 1.0}, vec3{0.0, 0.0,  4.0}, vec3{0.0, 4.0,  0.0}, right_blue));
+    world.add(std::make_shared<Quad>(point3{-2.0,  3.0, 1.0}, vec3{4.0, 0.0,  0.0}, vec3{0.0, 0.0,  4.0}, upper_orange));
+    world.add(std::make_shared<Quad>(point3{-2.0, -3.0, 5.0}, vec3{4.0, 0.0,  0.0}, vec3{0.0, 0.0, -4.0}, lower_teal));
+
+    return world;
+}
+
 color ray_color(Ray const & r, HittableI const & world, int depth) {
     if (depth <= 0)
         return color{0.0, 0.0, 0.0};
@@ -122,6 +141,7 @@ enum class SceneID {
     two_spheres,
     two_perlin_spheres,
     planet,
+    quads,
 };
 
 struct Scene {
@@ -131,14 +151,14 @@ struct Scene {
 
 Scene select_scene(SceneID const id)
 {
-    point3 const lookfrom{13.0, 2.0, 3.0};
     point3 const lookat{0.0, 0.0, 0.0};
     vec3 const vertical_up{0.0, 1.0, 0.0};
-    auto const vertical_fov_degree = FieldOfView{20.0};
     auto const focus_distance = FocusDistance{10.0};
     double const time0 = 0.0;
     double const time1 = 1.0;
 
+    point3 lookfrom{13.0, 2.0, 3.0};
+    auto vertical_fov_degree = FieldOfView{20.0};
     Aperture aperture{0.0};
     hittable_list world;
 
@@ -155,6 +175,11 @@ Scene select_scene(SceneID const id)
         break;
     case SceneID::planet:
         world = planet();
+        break;
+    case SceneID::quads:
+        world = quads();
+        vertical_fov_degree = FieldOfView{80};
+        lookfrom = point3{0.0, 0.0, 9.0};
         break;
     }
 
@@ -174,11 +199,11 @@ int main() {
     // Image
     int const image_width = 600;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 50;
+    int const samples_per_pixel = 500;
     int const max_depth = 5;
 
     // World and camera
-    auto const scene = select_scene(SceneID::planet);
+    auto const scene = select_scene(SceneID::quads);
     auto const world = BvhNode(scene.world, TimeInterval{0.0, 1.0});
     auto const camera = scene.camera;
 

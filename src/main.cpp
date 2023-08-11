@@ -33,7 +33,7 @@ hittable_list random_scene() {
             if ((center - point3{4, 0.2, 0.0}).length() <= 0.9)
                 continue;
 
-            std::shared_ptr<material_I> sphere_material;
+            std::shared_ptr<MaterialI> sphere_material;
             if (choose_mat < 0.8) {
                 // diffuse
                 auto const albedo = color::random() * color::random();

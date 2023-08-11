@@ -11,7 +11,7 @@
 #include <string>
 
 
-class material_I;
+class MaterialI;
 
 enum class FaceSide {front, back, miss /*indicates a miss hit_record*/};
 
@@ -27,7 +27,7 @@ std::string toString(FaceSide const side) {
 struct hit_record {
     point3 p;
     vec3 normal;
-    std::shared_ptr<material_I> material_ptr;
+    std::shared_ptr<MaterialI> material_ptr;
     double t;
     TextureCoordinates2d uv;
     FaceSide side;

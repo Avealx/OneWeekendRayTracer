@@ -32,7 +32,7 @@ TEST(scatter_info, can_be_cast_to_bool) {
     EXPECT_TRUE(ScatterInfo{});
 }
 
-struct mock_material : material_I {
+struct mock_material : MaterialI {
     static color mock_color() { return {1.0, 0.1, 0.01}; }
     static Ray   mock_ray() { return Ray{point3{1.0, 2.0, 3.0}, vec3{3.0, 2.0, 1.0}}; }
 
@@ -42,7 +42,7 @@ struct mock_material : material_I {
 };
 
 TEST(material, has_scatter_returning_ScatterInfo) {
-    std::unique_ptr<material_I> material_ptr = std::make_unique<mock_material>();
+    std::unique_ptr<MaterialI> material_ptr = std::make_unique<mock_material>();
     auto scatter_info = material_ptr->scatter(Ray{point3{0.0, 0.0, 0.0}, vec3{1.0, 1.0, 1.0}}, hit_record{});
     EXPECT_THAT(scatter_info.attenuation,   Eq(mock_material::mock_color()));
     EXPECT_THAT(scatter_info.scattered_ray, Eq(mock_material::mock_ray()));

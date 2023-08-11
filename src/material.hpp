@@ -17,17 +17,17 @@ struct ScatterInfo {
     explicit operator bool() const { return this != &miss(); }
 };
 
-struct material_I {
+struct MaterialI {
     virtual ScatterInfo scatter(Ray const & ray_in, hit_record const & hit_rec) const = 0;
 };
 
 //--------------------------------------------------------------------lambertian
-class lambertian : public material_I {
+class lambertian : public MaterialI {
 public:
     explicit lambertian(color const & albedo) : albedo_{std::make_shared<SolidColor>(albedo)} {}
     explicit lambertian(std::shared_ptr<TextureI> albedo) : albedo_{albedo} {}
 
-    // material_i
+    // MaterialI
     ScatterInfo scatter(Ray const & ray_in, hit_record const & hit_rec) const override {
         auto scatter_direction = hit_rec.normal + random_unit_vector();
         if (scatter_direction.near_zero())
@@ -44,13 +44,13 @@ private:
 };
 
 //-------------------------------------------------------------------------metal
-class metal : public material_I {
+class metal : public MaterialI {
 public:
     explicit constexpr metal(color const & albedo, double fuzz = 0.0)
     : albedo_{albedo}
     , fuzz_{0.0 <= fuzz && fuzz <= 1.0 ? fuzz : 1.0 } {}
 
-    // material_i
+    // MaterialI
     ScatterInfo scatter(Ray const & ray_in, hit_record const & hit_rec) const override {
         auto const scatter_direction = unit_vector(  reflect(ray_in.d, hit_rec.normal)
                                                    + fuzz_ * random_in_unit_sphere());
@@ -67,11 +67,11 @@ private:
 };
 
 //--------------------------------------------------------------------dielectric
-class dielectric : public material_I {
+class dielectric : public MaterialI {
 public:
     explicit constexpr dielectric(double index_of_refraction) : etaT_{index_of_refraction} {}
 
-    // material_i
+    // MaterialI
     ScatterInfo scatter(Ray const & ray_in, hit_record const & hit_rec) const override {
         constexpr double etaI = 1.0; // assume that the other material is air
         double const refraction_ratio = hit_rec.side == FaceSide::front ? (etaI / etaT_) : etaT_ / etaI;

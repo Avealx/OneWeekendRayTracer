@@ -12,9 +12,9 @@
 struct Sphere : HittableI {
     vec3 c;
     double r;
-    std::shared_ptr<material_I> material_ptr;
+    std::shared_ptr<MaterialI> material_ptr;
 
-    Sphere(vec3 const& c, double r, std::shared_ptr<material_I> material_ptr = nullptr /*TODO: make proper default material*/)
+    Sphere(vec3 const& c, double r, std::shared_ptr<MaterialI> material_ptr = nullptr /*TODO: make proper default material*/)
     : c{c}, r{r}, material_ptr{material_ptr} {}
 
     // HittableI

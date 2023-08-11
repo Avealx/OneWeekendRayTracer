@@ -10,14 +10,14 @@ struct MovingSphere : HittableI {
     vec3 c0, c1;   // centers at time t0, t1
     double r;      // radius
     double t0, t1; // times
-    std::shared_ptr<material_I> material_ptr;
+    std::shared_ptr<MaterialI> material_ptr;
 
     MovingSphere(vec3 const& c0,
                  vec3 const& c1,
                  double const time0,
                  double const time1,
                  double r,
-                 std::shared_ptr<material_I> material_ptr = nullptr /*TODO: make proper default material*/)
+                 std::shared_ptr<MaterialI> material_ptr = nullptr /*TODO: make proper default material*/)
     : c0{c0}, c1{c1}, t0{time0}, t1{time1}, r{r}, material_ptr{material_ptr} {}
 
     vec3 center(double const time) const;

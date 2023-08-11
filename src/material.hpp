@@ -10,13 +10,13 @@ struct ScatterInfo {
     color emitted;
     Ray scattered_ray;
 
-    explicit ScatterInfo(Ray const scattered_ray = Ray{},
+    explicit ScatterInfo(Ray const scattered_ray = Ray{point3{0.0}, vec3{1.0}},
                          color const attenuation = color{0.0},
                          color const emitted = color{0.0})
         : scattered_ray{scattered_ray}, attenuation{attenuation}, emitted{emitted} {}
 
     static ScatterInfo const & miss() {
-        static ScatterInfo the_miss{Ray{},
+        static ScatterInfo the_miss{Ray{point3{}, vec3{0.0}},
                                     color{std::numeric_limits<double>::lowest()},
                                     color{std::numeric_limits<double>::lowest()}};
         return the_miss;
@@ -24,7 +24,7 @@ struct ScatterInfo {
 
     static color default_emitted_color() { return color{0.0, 0.0, 0.0}; }
 
-    explicit operator bool() const { return this != &miss(); }
+    explicit operator bool() const { return scattered_ray.d != vec3{0.0}; }
 };
 
 struct MaterialI {

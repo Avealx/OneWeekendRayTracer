@@ -208,6 +208,7 @@ TEST_F(a_dielectric_material, stores_the_correct_hit_time) {
 };
 
 
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

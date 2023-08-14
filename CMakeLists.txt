@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(weekend_raytracer CXX)
 
-set(CMAKE_CXXSTANDARD 20)
+set(CMAKE_CXX_STANDARD 20)
 
 include(CTest)
 

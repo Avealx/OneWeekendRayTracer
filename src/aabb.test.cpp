@@ -5,6 +5,7 @@
 
 
 using testing::Eq;
+using testing::Ne;
 using testing::Test;
 
 
@@ -101,6 +102,17 @@ TEST(Aabb, can_be_padded_selectively) {
     EXPECT_THAT(aabb.max().y, Eq(expanded.max().y));
     EXPECT_THAT(aabb.min().z, Eq(expanded.min().z));
     EXPECT_THAT(aabb.max().z, Eq(expanded.max().z));
+}
+
+TEST(Aabb, can_return_all_corners) {
+    auto const all_corners = get_all_corners(Aabb{AabbBounds{vec3{0.0}, vec3{1.0}}});
+    std::vector<vec3> const required_corners = {vec3{0.0, 0.0, 0.0}, vec3{0.0, 0.0, 1.0},
+                                                vec3{0.0, 1.0, 0.0}, vec3{0.0, 1.0, 1.0},
+                                                vec3{1.0, 0.0, 0.0}, vec3{1.0, 0.0, 1.0},
+                                                vec3{1.0, 1.0, 0.0}, vec3{1.0, 1.0, 1.0}};
+    for (auto const & corner : required_corners)
+        EXPECT_THAT(std::find(std::cbegin(all_corners), std::cend(all_corners), corner),
+                    Ne(std::cend(all_corners)));
 }
 
 

@@ -71,3 +71,12 @@ Aabb surrounding_box(Aabb const & aabb0, Aabb const & aabb1) {
         max_components(aabb0.max(), aabb1.max())
     }};
 }
+
+std::vector<vec3> get_all_corners(Aabb const & aabb) {
+    auto const min = aabb.min();
+    auto const max = aabb.max();
+    return {vec3{min.x, min.y, min.z}, vec3{min.x, min.y, max.z},
+            vec3{min.x, max.y, min.z}, vec3{min.x, max.y, max.z},
+            vec3{max.x, min.y, min.z}, vec3{max.x, min.y, max.z},
+            vec3{max.x, max.y, min.z}, vec3{max.x, max.y, max.z}};
+}

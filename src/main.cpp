@@ -142,8 +142,19 @@ HittableList cornell_box() {
     world.add(std::make_shared<Quad>(point3(  0.0, 555.0,   0.0), vec3(555,0,0), vec3(0,0,555), white));  // top
     world.add(std::make_shared<Quad>(point3(  0.0,   0.0, 555.0), vec3(555,0,0), vec3(0,555,0), white));  // back
 
-    world.add(box(point3{130.0, 0.0, 65}, point3{295.0, 165.0, 230.0}, white));
-    world.add(box(point3{265.0, 0.0, 295.0}, point3{430.0, 330.0, 460.0}, white));
+    // unrotated boxes
+    // world.add(box(point3{130.0, 0.0, 65}, point3{295.0, 165.0, 230.0}, white));
+    // world.add(box(point3{265.0, 0.0, 295.0}, point3{430.0, 330.0, 460.0}, white));
+
+    std::shared_ptr<HittableI> box1 = box(point3{0.0, 0.0, 0.0}, point3(165.0, 330.0, 165.0), white);
+    box1 = std::make_shared<RotatedY>(box1, 15);
+    box1 = std::make_shared<Translated>(box1, vec3{265.0, 0.0, 295.0});
+    world.add(box1);
+
+    std::shared_ptr<HittableI> box2 = box(point3{0.0, 0.0, 0.0}, point3(165.0, 165.0, 165.0), white);
+    box2 = std::make_shared<RotatedY>(box2, -18);
+    box2 = std::make_shared<Translated>(box2, vec3{130.0, 0.0, 65.0});
+    world.add(box2);
 
     return world;
 }
@@ -261,10 +272,10 @@ Scene select_scene(SceneID const id)
 
 int main() {
     // Image
-    int const image_width = 600;
+    int const image_width = 1200;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 500;
-    int const max_depth = 5;
+    int const samples_per_pixel = 5000;
+    int const max_depth = 50;
 
     // World and camera
     auto const scene = select_scene(SceneID::cornell_box);

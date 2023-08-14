@@ -4,6 +4,7 @@
 #include <common.hpp>
 #include <hit.hpp>
 #include <hittable_list.hpp>
+#include <hittables.hpp>
 #include <moving_sphere.hpp>
 #include <perlin.hpp>
 #include <quad.hpp>
@@ -140,7 +141,9 @@ HittableList cornell_box() {
     world.add(std::make_shared<Quad>(point3(  0.0,   0.0,   0.0), vec3(555,0,0), vec3(0,0,555), white));
     world.add(std::make_shared<Quad>(point3(  0.0, 555.0,   0.0), vec3(555,0,0), vec3(0,0,555), white));  // top
     world.add(std::make_shared<Quad>(point3(  0.0,   0.0, 555.0), vec3(555,0,0), vec3(0,555,0), white));  // back
-    // world.add(std::make_shared<Quad>(point3(  0.0,   0.0, 555.0), vec3(555,0,0), vec3(0,555,0), light));  // back
+
+    world.add(box(point3{130.0, 0.0, 65}, point3{295.0, 165.0, 230.0}, white));
+    world.add(box(point3{265.0, 0.0, 295.0}, point3{430.0, 330.0, 460.0}, white));
 
     return world;
 }
@@ -260,8 +263,8 @@ int main() {
     // Image
     int const image_width = 600;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 5000;
-    int const max_depth = 50;
+    int const samples_per_pixel = 500;
+    int const max_depth = 5;
 
     // World and camera
     auto const scene = select_scene(SceneID::cornell_box);

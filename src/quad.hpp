@@ -13,7 +13,8 @@ public:
         , normal_{unit_vector(cross(u, v))}
         , d_{dot(corner_, normal_)}
         , w_{cross(u, v) / (dot(cross(u, v), cross(u, v)))}
-        , aabb_{Aabb{AabbBounds{corner, corner + u + v}}.pad()} {}
+        , aabb_{Aabb{AabbBounds{min_components(corner, corner + u + v),
+                                max_components(corner, corner + u + v)}}.pad()} {}
 
     // HittableI
     HitRecord hit(Ray const & ray, double t_min, double t_max) const override {

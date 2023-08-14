@@ -18,7 +18,7 @@ TEST(BvhNode, can_be_default_constructed) {
 }
 
 TEST(BvhNode, can_be_constructed_from_hittable_list) {
-    BvhNode const bvh{hittable_list{std::make_shared<Sphere>(vec3{}, 1.0)},
+    BvhNode const bvh{HittableList{std::make_shared<Sphere>(vec3{}, 1.0)},
                       TimeInterval{}};
 }
 
@@ -32,7 +32,7 @@ TEST(BvhNode, can_be_constructed_from_hittables) {
 struct ABvhNode : Test {
 public:
     Sphere const sphere{vec3{2.0}, 1.0};
-    BvhNode const bvh{hittable_list{std::make_shared<Sphere>(sphere)}, TimeInterval{}};
+    BvhNode const bvh{HittableList{std::make_shared<Sphere>(sphere)}, TimeInterval{}};
 };
 
 TEST_F(ABvhNode, can_be_missed) {
@@ -51,7 +51,7 @@ public:
     Sphere const sphere2{vec3{2.0, -1.0, -12.0}, 0.1};
     Sphere const sphere3{vec3{3.0, 1.2, -11.0}, 0.1};
     Sphere const sphere4{vec3{4.0, -1.1, -11.0}, 0.1};
-    BvhNode const bvh{hittable_list{{std::make_shared<Sphere>(sphere1),
+    BvhNode const bvh{HittableList{{std::make_shared<Sphere>(sphere1),
                                      std::make_shared<Sphere>(sphere2),
                                      std::make_shared<Sphere>(sphere3),
                                      std::make_shared<Sphere>(sphere4)}},

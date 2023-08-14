@@ -18,8 +18,8 @@
 auto const aspect_ratio = 3.0 / 2.0;
 
 
-hittable_list random_scene() {
-    hittable_list world;
+HittableList random_scene() {
+    HittableList world;
 
     // auto ground_material = std::make_shared<lambertian>(color{0.5, 0.5, 0.5, });
     auto ground_texture = std::make_shared<CheckerTexture>(color{0.0, 0.25, 0.25}, color{0.15, 0.05, 0.05});
@@ -69,8 +69,8 @@ hittable_list random_scene() {
     return world;
 }
 
-hittable_list two_spheres() {
-    hittable_list world;
+HittableList two_spheres() {
+    HittableList world;
 
     auto checker_texture = std::make_shared<CheckerTexture>(color{0.0, 0.25, 0.25}, color{0.9, 0.9, 0.9});
     world.add(std::make_shared<Sphere>(point3(0.0, -10.0, 0.0), 10, std::make_shared<lambertian>(checker_texture)));
@@ -79,8 +79,8 @@ hittable_list two_spheres() {
     return world;
 }
 
-hittable_list two_perlin_spheres() {
-    hittable_list world;
+HittableList two_perlin_spheres() {
+    HittableList world;
 
     auto perlin_texture = std::make_shared<NoiseTexture>(4.0 /*frequency scale*/);
     world.add(std::make_shared<Sphere>(point3{0.0, -1000.0, 0.0}, 1000.0, std::make_shared<lambertian>(perlin_texture)));
@@ -89,8 +89,8 @@ hittable_list two_perlin_spheres() {
     return world;
 }
 
-hittable_list planet() {
-    hittable_list world;
+HittableList planet() {
+    HittableList world;
 
     auto earth_texture = std::make_shared<ImageTexture>(std::string{DATA_PATH "/earthmap.jpg"});
     world.add(std::make_shared<Sphere>(point3{0.0, 0.0, 0.0}, 2.0, std::make_shared<lambertian>(earth_texture)));
@@ -98,8 +98,8 @@ hittable_list planet() {
     return world;
 }
 
-hittable_list quads() {
-    hittable_list world;
+HittableList quads() {
+    HittableList world;
 
     auto left_red     = std::make_shared<lambertian>(color(1.0, 0.2, 0.2));
     auto back_green   = std::make_shared<lambertian>(color(0.2, 1.0, 0.2));
@@ -116,8 +116,8 @@ hittable_list quads() {
     return world;
 }
 
-hittable_list simple_light() {
-    hittable_list world = two_perlin_spheres();
+HittableList simple_light() {
+    HittableList world = two_perlin_spheres();
 
     auto diffuse_light = std::make_shared<DiffuseLight>(color(4.0, 4.0, 4.0));
     world.add(std::make_shared<Sphere>(point3(0.0, 7.0, 0.0), 2.0, diffuse_light));
@@ -126,8 +126,8 @@ hittable_list simple_light() {
     return world;
 }
 
-hittable_list cornell_box() {
-    hittable_list world;
+HittableList cornell_box() {
+    HittableList world;
 
     auto red   = std::make_shared<lambertian>(color{0.65, 0.05, 0.05});
     auto white = std::make_shared<lambertian>(color{0.73, 0.73, 0.73});
@@ -190,7 +190,7 @@ enum class SceneID {
 };
 
 struct Scene {
-    hittable_list world;
+    HittableList world;
     BackgroundFunction background_color;
     Camera camera;
 };
@@ -207,7 +207,7 @@ Scene select_scene(SceneID const id)
     point3 lookat{0.0, 0.0, 0.0};
     auto vertical_fov_degree = FieldOfView{20.0};
     Aperture aperture{0.0};
-    hittable_list world;
+    HittableList world;
 
     switch (id) {
     case SceneID::random_spheres:

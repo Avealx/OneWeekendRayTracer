@@ -28,22 +28,22 @@ struct mock_hittable : HittableI {
 };
 
 
-TEST(hittable_list, can_be_default_constructed) {
-    hittable_list{};
+TEST(HittableList, can_be_default_constructed) {
+    HittableList{};
 }
 
-TEST(hittable_list, can_be_constructed_with_element) {
-    EXPECT_THAT(hittable_list{std::make_shared<mock_hittable>()}.objects.size(), Eq(1)) ;
+TEST(HittableList, can_be_constructed_with_element) {
+    EXPECT_THAT(HittableList{std::make_shared<mock_hittable>()}.objects.size(), Eq(1)) ;
 }
 
-TEST(hittable_list, can_be_constructed_from_vector_of_hittables) {
-    hittable_list const hl{{std::make_shared<mock_hittable>(),
+TEST(HittableList, can_be_constructed_from_vector_of_hittables) {
+    HittableList const hl{{std::make_shared<mock_hittable>(),
                             std::make_shared<mock_hittable>()}};
     EXPECT_THAT(hl.objects.size(), Eq(2ul));
 }
 
-TEST(hittable_list, allows_adding_objects) {
-    hittable_list hl{};
+TEST(HittableList, allows_adding_objects) {
+    HittableList hl{};
     auto size_before_add = hl.objects.size();
 
 
@@ -54,8 +54,8 @@ TEST(hittable_list, allows_adding_objects) {
     EXPECT_THAT(size_after_add, Eq(1));
 }
 
-TEST(hittable_list, allows_clearing) {
-    hittable_list hl{std::make_shared<mock_hittable>()};
+TEST(HittableList, allows_clearing) {
+    HittableList hl{std::make_shared<mock_hittable>()};
     auto size_before_clear = hl.objects.size();
 
     hl.clear();
@@ -65,8 +65,8 @@ TEST(hittable_list, allows_clearing) {
     EXPECT_THAT(size_after_clear, Eq(0));
 }
 
-TEST(hittable_list, returns_closest_hit) {
-    hittable_list hl{{std::make_shared<mock_hittable>(10.0),
+TEST(HittableList, returns_closest_hit) {
+    HittableList hl{{std::make_shared<mock_hittable>(10.0),
                       std::make_shared<mock_hittable>(5.0),
                       std::make_shared<mock_hittable>(7.5)}};
 
@@ -76,10 +76,10 @@ TEST(hittable_list, returns_closest_hit) {
     EXPECT_THAT(record.t, Eq(5.0));
 }
 
-TEST(hittable_list, has_bounding_box) {
+TEST(HittableList, has_bounding_box) {
     vec3 aabb_position0{1.0, 1.0, 1.0};
     vec3 aabb_position1{2.0, 2.0, 2.0};
-    hittable_list hl{{std::make_shared<mock_hittable>(0.0, aabb_position0),
+    HittableList hl{{std::make_shared<mock_hittable>(0.0, aabb_position0),
                       std::make_shared<mock_hittable>(5.0, aabb_position1)}};
     EXPECT_THAT(hl.bounding_box(TimeInterval{}).min(), Eq(aabb_position0));
     EXPECT_THAT(hl.bounding_box(TimeInterval{}).max(), Eq(aabb_position1));

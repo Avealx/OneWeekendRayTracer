@@ -9,7 +9,7 @@
 struct BvhNode : public HittableI {
 public:
     BvhNode() = default;
-    BvhNode(hittable_list const & hittables, TimeInterval times);
+    BvhNode(HittableList const & hittables, TimeInterval times);
     BvhNode(std::vector<std::shared_ptr<HittableI>> hittables,
             TimeInterval times);
 
@@ -45,7 +45,7 @@ inline Aabb BvhNode::bounding_box(TimeInterval times) const {
     return aabb;
 }
 
-inline BvhNode::BvhNode(hittable_list const & hittables, TimeInterval times)
+inline BvhNode::BvhNode(HittableList const & hittables, TimeInterval times)
     : BvhNode{hittables.objects, times} {}
 
 inline BvhNode::BvhNode(std::vector<std::shared_ptr<HittableI>> hittables,

@@ -6,10 +6,10 @@
 #include <memory>
 #include <vector>
 
-struct hittable_list : HittableI {
-    hittable_list() = default;
-    hittable_list(std::shared_ptr<HittableI> object) { add(object); }
-    hittable_list(std::vector<std::shared_ptr<HittableI>> const & hittables) : objects{hittables} {}
+struct HittableList : HittableI {
+    HittableList() = default;
+    HittableList(std::shared_ptr<HittableI> object) { add(object); }
+    HittableList(std::vector<std::shared_ptr<HittableI>> const & hittables) : objects{hittables} {}
 
     void clear() { objects.clear(); }
     void add(std::shared_ptr<HittableI> object) { objects.push_back(object); }
@@ -33,7 +33,7 @@ struct hittable_list : HittableI {
     std::vector<std::shared_ptr<HittableI>> objects;
 };
 
-inline Aabb hittable_list::bounding_box(TimeInterval times) const {
+inline Aabb HittableList::bounding_box(TimeInterval times) const {
     if (objects.empty())
         return Aabb{AabbBounds{vec3{1.0}, vec3{-1.0}}};  // invalid
 

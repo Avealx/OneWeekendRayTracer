@@ -26,4 +26,14 @@ struct TypedInterval {
     }
 };
 
+template <typename Value, class Tag>
+TypedInterval<Value, Tag> operator+(TypedInterval<Value, Tag> const & interval, Value val) {
+    return TypedInterval<Value, Tag>{interval.min + val, interval.max + val};
+}
+
+template <typename Value, class Tag>
+bool operator==(TypedInterval<Value, Tag> const & lhs, TypedInterval<Value, Tag> const & rhs) {
+    return lhs.min == rhs.min && lhs.max == rhs.max;
+}
+
 using TimeInterval = TypedInterval<double, struct TimeIntervalTag>;

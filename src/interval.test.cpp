@@ -51,6 +51,26 @@ TEST_F(AVec3Interval, has_length) {
     EXPECT_THAT(interval.length(), Eq((max - min).length()));
 }
 
+TEST_F(ADoubleInterval, can_be_compared_for_equality) {
+    EXPECT_THAT(interval, Eq(DoubleInterval{min, max}));
+}
+
+TEST_F(AVec3Interval, can_be_compared_for_equality) {
+    EXPECT_THAT(interval, Eq(Vec3Interval{min, max}));
+}
+
+TEST_F(ADoubleInterval, can_be_translated) {
+    double const translation{1.0};
+    EXPECT_THAT(interval + translation,
+                Eq(decltype(interval){min + translation, max + translation}));
+}
+
+TEST_F(AVec3Interval, can_be_translated) {
+    vec3 const translation{1.0};
+    EXPECT_THAT(interval + translation,
+                Eq(decltype(interval){min + translation, max + translation}));
+}
+
 
 int main(int argc, char **argv)
 {

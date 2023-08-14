@@ -42,6 +42,10 @@ public:
         return Aabb{bounds};
     }
 
+    friend Aabb operator+(Aabb const aabb, vec3 const & translation) {
+        return Aabb{aabb.bounds_ + translation};
+    }
+
 private:
     AabbBounds bounds_;
 };

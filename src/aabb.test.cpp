@@ -81,6 +81,12 @@ TEST_F(AnAabb, can_be_joined_with_another) {
     EXPECT_THAT(surrounding_aabb.max(), Eq(2.0 * max));
 }
 
+TEST_F(AnAabb, can_be_translated) {
+    vec3 const translation{1.0, -2.0, 3.0};
+    Aabb const translated = aabb + translation;
+    EXPECT_THAT(translated.min(), Eq(min + translation));
+    EXPECT_THAT(translated.max(), Eq(max + translation));
+}
 
 TEST(Aabb, can_be_padded_selectively) {
     vec3 const min{0.0, 1.0, 2.0};

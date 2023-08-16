@@ -2,6 +2,7 @@
 #include <camera.hpp>
 #include <color.hpp>
 #include <common.hpp>
+#include <counter.hpp>
 #include <hit.hpp>
 #include <hittable_list.hpp>
 #include <hittables.hpp>
@@ -14,6 +15,7 @@
 
 #include <iostream>
 #include <memory>
+#include <thread>
 
 
 auto const aspect_ratio = 3.0 / 2.0;
@@ -270,25 +272,28 @@ Scene select_scene(SceneID const id)
                    time1}};
 }
 
-int main() {
-    // Image
-    int const image_width = 1200;
-    int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 5000;
-    int const max_depth = 50;
+std::mutex CERR_MUTEX;
+std::mutex WRITE_MUTEX;
 
-    // World and camera
-    auto const scene = select_scene(SceneID::cornell_box);
-    auto const world = BvhNode(scene.world, TimeInterval{0.0, 1.0});
-    auto const camera = scene.camera;
+void render_rows(Counter& rows,
+                 int const image_height,
+                 int const image_width,
+                 int const samples_per_pixel,
+                 int const max_depth,
+                 Scene const scene,
+                 std::vector<std::vector<color>>& result_image) {
+        auto const world = BvhNode(scene.world, TimeInterval{0.0, 1.0});
+        auto const camera = scene.camera;
 
-    // Render
-    std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
-
-    if (true) {
-        for (int j = image_height - 1; j >= 0; --j)
+        while(auto next_row = rows.next())
         {
-            std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+            int j = image_height - static_cast<int>(next_row.value()) - 1;
+
+            {
+                std::lock_guard lock{CERR_MUTEX};
+                std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+            }
+
             for (int i = 0; i < image_width; ++i)
             {
                 color pixel_color{0.0, 0.0, 0.0};
@@ -299,14 +304,68 @@ int main() {
                     pixel_color += ray_color(r, world, max_depth, scene.background_color);
                 }
 
+                result_image[next_row.value()][i] = pixel_color;
+                //{
+                //    std::lock_guard lock{WRITE_MUTEX};
+                //    write_color(std::cout,
+                //                pixel_color,
+                //                samples_per_pixel,
+                //                ns_color::WritePretty{false},
+                //                ns_color::GammaCorrection{true});
+                //    std::cout << " ";
+                //}
+            }
+        }
+}
+
+
+int main() {
+    // Image
+    int const image_width = 1200;
+    int const image_height = static_cast<int>(image_width / aspect_ratio);
+    int const samples_per_pixel = 5000;
+    int const max_depth = 50;
+
+    auto const scene = select_scene(SceneID::cornell_box);
+
+    std::vector<std::vector<color>> result(image_height, std::vector<color>(image_width));
+
+    // Render
+    std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+
+    if (true) {
+        Counter rows{image_height};
+        auto const number_of_threads = std::max(2u, std::thread::hardware_concurrency());
+        std::vector<std::thread> threads(number_of_threads - 1);
+        for (auto & thread : threads)
+            thread = std::thread{render_rows,
+                                 std::ref(rows),
+                                 image_height,
+                                 image_width,
+                                 samples_per_pixel,
+                                 max_depth,
+                                 scene,
+                                 std::ref(result)};
+        render_rows(rows,
+                    image_height,
+                    image_width,
+                    samples_per_pixel,
+                    max_depth,
+                    scene,
+                    std::ref(result));
+
+        for (auto & thread : threads)
+            thread.join();
+
+        for (auto const & row : result)
+            for (auto const & pixel : row) {
                 write_color(std::cout,
-                            pixel_color,
+                            pixel,
                             samples_per_pixel,
                             ns_color::WritePretty{false},
                             ns_color::GammaCorrection{true});
                 std::cout << " ";
             }
-        }
     }
     else {
         Perlin noise{};

@@ -129,7 +129,7 @@ HittableList simple_light() {
     return world;
 }
 
-HittableList cornell_box() {
+HittableList cornell_box_base() {
     HittableList world;
 
     auto red   = std::make_shared<lambertian>(color{0.65, 0.05, 0.05});
@@ -144,9 +144,13 @@ HittableList cornell_box() {
     world.add(std::make_shared<Quad>(point3(  0.0, 555.0,   0.0), vec3(555,0,0), vec3(0,0,555), white));  // top
     world.add(std::make_shared<Quad>(point3(  0.0,   0.0, 555.0), vec3(555,0,0), vec3(0,555,0), white));  // back
 
-    // unrotated boxes
-    // world.add(box(point3{130.0, 0.0, 65}, point3{295.0, 165.0, 230.0}, white));
-    // world.add(box(point3{265.0, 0.0, 295.0}, point3{430.0, 330.0, 460.0}, white));
+    return world;
+}
+
+HittableList cornell_box() {
+    HittableList world = cornell_box_base();
+
+    auto white = std::make_shared<lambertian>(color{0.73, 0.73, 0.73});
 
     std::shared_ptr<HittableI> box1 = box(point3{0.0, 0.0, 0.0}, point3(165.0, 330.0, 165.0), white);
     box1 = std::make_shared<RotatedY>(box1, 15);
@@ -160,6 +164,29 @@ HittableList cornell_box() {
 
     return world;
 }
+
+
+
+
+HittableList cornell_smoke() {
+
+    HittableList world = cornell_box_base();
+
+    auto white = std::make_shared<lambertian>(color{0.73, 0.73, 0.73});
+
+    std::shared_ptr<HittableI> box1 = box(point3{0.0, 0.0, 0.0}, point3(165.0, 330.0, 165.0), white);
+    box1 = std::make_shared<RotatedY>(box1, 15);
+    box1 = std::make_shared<Translated>(box1, vec3{265.0, 0.0, 295.0});
+    world.add(std::make_shared<ConstantMedium>(box1, 0.01, color{0.0, 0.0, 0.0}));
+
+    std::shared_ptr<HittableI> box2 = box(point3{0.0, 0.0, 0.0}, point3(165.0, 165.0, 165.0), white);
+    box2 = std::make_shared<RotatedY>(box2, -18);
+    box2 = std::make_shared<Translated>(box2, vec3{130.0, 0.0, 65.0});
+    world.add(std::make_shared<ConstantMedium>(box2, 0.01, color{1.0, 1.0, 1.0}));
+
+    return world;
+}
+
 
 using BackgroundFunction = std::function<color(Ray const &)>;
 
@@ -203,6 +230,7 @@ enum class SceneID {
     quads,
     simple_light,
     cornell_box,
+    cornell_smoke,
 };
 
 struct Scene {
@@ -252,6 +280,13 @@ Scene select_scene(SceneID const id)
         break;
     case SceneID::cornell_box:
         world = cornell_box();
+        vertical_fov_degree = FieldOfView{40.0};
+        lookfrom = point3{278.0, 278.0, -800};
+        lookat = point3{278.0, 278.0, 0.0};
+        background_color = black_background;
+        break;
+    case SceneID::cornell_smoke:
+        world = cornell_smoke();
         vertical_fov_degree = FieldOfView{40.0};
         lookfrom = point3{278.0, 278.0, -800};
         lookat = point3{278.0, 278.0, 0.0};
@@ -323,10 +358,10 @@ int main() {
     // Image
     int const image_width = 1200;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 5000;
+    int const samples_per_pixel = 50;
     int const max_depth = 50;
 
-    auto const scene = select_scene(SceneID::cornell_box);
+    auto const scene = select_scene(SceneID::cornell_smoke);
 
     std::vector<std::vector<color>> result(image_height, std::vector<color>(image_width));
 

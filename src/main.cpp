@@ -308,7 +308,6 @@ Scene select_scene(SceneID const id)
 }
 
 std::mutex CERR_MUTEX;
-std::mutex WRITE_MUTEX;
 
 void render_rows(Counter& rows,
                  int const image_height,
@@ -340,15 +339,6 @@ void render_rows(Counter& rows,
                 }
 
                 result_image[next_row.value()][i] = pixel_color;
-                //{
-                //    std::lock_guard lock{WRITE_MUTEX};
-                //    write_color(std::cout,
-                //                pixel_color,
-                //                samples_per_pixel,
-                //                ns_color::WritePretty{false},
-                //                ns_color::GammaCorrection{true});
-                //    std::cout << " ";
-                //}
             }
         }
 }

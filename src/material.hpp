@@ -111,6 +111,7 @@ private:
     }
 };
 
+//-----------------------------------------------------------------diffuse light
 class DiffuseLight : public MaterialI {
 public:
     DiffuseLight(color const & c) : emitter_{std::make_shared<SolidColor>(c)} {}
@@ -124,4 +125,22 @@ public:
     }
 private:
     std::shared_ptr<TextureI> emitter_;
+};
+
+//-----------------------------------------------------------------diffuse light
+class Isotropic : public MaterialI {
+public:
+    Isotropic(color const c) : albedo_{std::make_shared<SolidColor>(c)} {}
+    Isotropic(std::shared_ptr<TextureI> albedo) : albedo_{albedo} {}
+
+    // MaterialI
+    virtual ScatterInfo scatter(Ray const & ray_in, HitRecord const & hit_rec) const override {
+        ScatterInfo result{};
+        result.scattered_ray = Ray(hit_rec.p, random_unit_vector(), ray_in.t);
+        result.attenuation = albedo_->value(hit_rec.uv, hit_rec.p);
+        return result;
+    }
+
+private:
+    std::shared_ptr<TextureI> albedo_;
 };

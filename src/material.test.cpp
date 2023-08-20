@@ -16,6 +16,7 @@ using ::testing::Eq;
 using ::testing::Ge;
 using ::testing::Gt;
 using ::testing::Lt;
+using ::testing::Ne;
 using ::testing::Test;
 
 
@@ -222,6 +223,24 @@ TEST_F(ADiffuseLight, does_not_scatter) {
 TEST_F(ADiffuseLight, has_correct_emitted_color) {
     auto scatter_info = light.scatter(ray, hit_record);
     EXPECT_THAT(scatter_info.emitted, Eq(light_color));
+}
+
+struct AnIsotropicMaterial : Test {
+    color const material_color{0.1, 0.25, 0.25};
+    HitRecord const hit_record{};
+    Ray const ray{};
+    Isotropic const material{material_color};
+};
+
+TEST_F(AnIsotropicMaterial, scatters_randomly) {
+    auto const scatter_info1 = material.scatter(ray, hit_record);
+    auto const scatter_info2 = material.scatter(ray, hit_record);
+    EXPECT_THAT(scatter_info1.scattered_ray, Ne(scatter_info2.scattered_ray));
+}
+
+TEST_F(AnIsotropicMaterial, returns_correct_attenuation) {
+    auto const scatter_info = material.scatter(ray, hit_record);
+    EXPECT_THAT(scatter_info.attenuation, Eq(material_color));
 }
 
 

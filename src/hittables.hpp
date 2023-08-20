@@ -108,3 +108,52 @@ HitRecord RotatedY::hit(Ray const & ray, double t_min, double t_max) const {
     hit_record.normal = rotate_y(hit_record.normal);
     return hit_record;
 }
+
+class ConstantMedium : public HittableI {
+public:
+    ConstantMedium(std::shared_ptr<HittableI> boundary, double const density, std::shared_ptr<TextureI> texture)
+        : boundary_{boundary}
+        , neg_inv_density_{-1.0 / density}
+        , phase_function_{std::make_shared<Isotropic>(texture)} {}
+
+    ConstantMedium(std::shared_ptr<HittableI> boundary, double const density, color const color)
+        : boundary_{boundary}
+        , neg_inv_density_{-1.0 / density}
+        , phase_function_{std::make_shared<Isotropic>(color)} {}
+
+    // HittableI
+    HitRecord hit(Ray const & ray, double t_min, double t_max) const override {
+        HitRecord hit_record1;
+        if (!(hit_record1 = boundary_->hit(ray, -infinity, infinity)))
+            return HitRecord::miss();
+
+        HitRecord hit_record2;
+        if (!(hit_record2 = boundary_->hit(ray, hit_record1.t + 0.0001, infinity)))
+            return HitRecord::miss();
+
+        hit_record1.t = std::clamp(hit_record1.t, t_min, t_max);
+        hit_record2.t = std::clamp(hit_record2.t, t_min, t_max);
+
+        auto const ray_length = ray.direction().length();
+        auto const distance_inside_boundary = (hit_record2.t - hit_record1.t) * ray_length;
+        auto const hit_distance = neg_inv_density_ * std::log(random_double());
+
+        if (hit_distance > distance_inside_boundary)
+            return HitRecord::miss();
+
+        HitRecord result{};
+        result.t = hit_record1.t + hit_distance / ray_length;
+        result.p = ray.at(result.t);
+        result.material_ptr = phase_function_;
+        return result;
+    }
+
+    Aabb bounding_box(TimeInterval times) const override{ return boundary_->bounding_box(times); };
+
+
+
+private:
+    std::shared_ptr<HittableI> boundary_;
+    double const neg_inv_density_;
+    std::shared_ptr<MaterialI> phase_function_;
+};

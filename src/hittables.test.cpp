@@ -92,6 +92,11 @@ TEST_F(ARotatedY, can_be_missed) {
     EXPECT_FALSE(rotated.hit(missing_ray, 0.0, infinity));
 }
 
+// struct AConstantMedium : Test {
+//
+// };
+
+
 
 int main(int argc, char ** argv) {
     ::testing::InitGoogleTest(&argc, argv);

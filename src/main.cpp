@@ -24,7 +24,6 @@ auto const aspect_ratio = 3.0 / 2.0;
 HittableList random_scene() {
     HittableList world;
 
-    // auto ground_material = std::make_shared<lambertian>(color{0.5, 0.5, 0.5, });
     auto ground_texture = std::make_shared<CheckerTexture>(color{0.0, 0.25, 0.25}, color{0.15, 0.05, 0.05});
     auto ground_material = std::make_shared<lambertian>(ground_texture);
     world.add(std::make_shared<Sphere>(point3{0.0, -1000.0, 0.0}, 1000.0, ground_material));
@@ -187,6 +186,69 @@ HittableList cornell_smoke() {
     return world;
 }
 
+HittableList final_scene() {
+    HittableList boxes1;
+    // floor
+    auto const ground = std::make_shared<lambertian>(color{0.48, 0.83, 0.53});
+    int const boxes_per_side = 20;
+    for (int ii = 0; ii < boxes_per_side; ++ii)
+        for (int jj = 0; jj < boxes_per_side; ++jj) {
+            auto const w = 100.0;
+            auto const x0 = -1000.0 + ii * w;
+            auto const z0 = -1000.0 + jj * w;
+            auto const y0 = 0.0;
+            auto const x1 = x0 + w;
+            auto const y1 = random_double(1.0, 101.0);
+            auto const z1 = z0 + w;
+            boxes1.add(box(point3{x0, y0, z0}, point3{x1, y1, z1}, ground));
+        }
+
+    HittableList world;
+    world.add(std::make_shared<BvhNode>(boxes1, TimeInterval{}));
+
+    // light
+    auto const light = std::make_shared<DiffuseLight>(color(7.0, 7.0, 7.0));
+    world.add(std::make_shared<Quad>(point3{123.0, 554.0, 147.0}, vec3{300.0, 0.0, 0.0}, vec3{0.0, 0.0, 265.0}, light));
+
+    // moving sphere
+    auto const center1 = point3{400.0, 400.0, 200.0};
+    auto const center2 = center1 + vec3{30.0, 0.0, 0.0};
+    auto const sphere_material = std::make_shared<lambertian>(color{0.7, 0.3, 0.1});
+    world.add(std::make_shared<MovingSphere>(center1, center2, 0.0, 1.0, 50.0, sphere_material));
+
+    // glass sphere
+    world.add(std::make_shared<Sphere>(point3{260.0, 150.0, 45.0}, 50.0, std::make_shared<dielectric>(1.5)));
+    // metal sphere
+    world.add(std::make_shared<Sphere>(point3{0.0, 150.0, 145.0}, 50.0, std::make_shared<metal>(color{0.8, 0.8, 0.0}, 1.0)));
+
+    // volume
+    auto const boundary1 = std::make_shared<Sphere>(point3{360.0, 150.0, 145.0}, 70.0, std::make_shared<dielectric>(1.5));
+    world.add(boundary1);
+    world.add(std::make_shared<ConstantMedium>(boundary1, 0.2, color(0.2, 0.4, 0.9)));
+    // enveloping volume
+    // auto const boundary2 = std::make_shared<Sphere>(point3{0.0, 0.0, 0.0}, 5000.0, std::make_shared<dielectric>(1.5));
+    // world.add(std::make_shared<ConstantMedium>(boundary2, 0.0001, color{1.0, 1.0, 1.0}));
+
+    // globe
+    auto const earth_material = std::make_shared<lambertian>(std::make_shared<ImageTexture>(std::string{DATA_PATH "/earthmap.jpg"}));
+    world.add(std::make_shared<Sphere>(point3{400.0, 200.0, 400.0}, 100.0, earth_material));
+    // perlin noise sphere
+    auto const pertext = std::make_shared<NoiseTexture>(0.2);
+    world.add(std::make_shared<Sphere>(point3{220.0, 280.0 ,300.0}, 80.0, std::make_shared<lambertian>(pertext)));
+
+    // spheres in a box
+    HittableList boxes2;
+    auto const white = std::make_shared<lambertian>(color{0.73, 0.73, 0.73});
+    int const ns = 1000;
+    for (int j = 0; j < ns; j++)
+        boxes2.add(std::make_shared<Sphere>(point3::random(0.0,165.0), 10.0, white));
+    world.add(std::make_shared<Translated>(
+        make_shared<RotatedY>(
+            std::make_shared<BvhNode>(boxes2, TimeInterval{}), 15.0),
+            vec3{-100.0, 270.0, 395.0}));
+
+    return world;
+}
 
 using BackgroundFunction = std::function<color(Ray const &)>;
 
@@ -231,6 +293,7 @@ enum class SceneID {
     simple_light,
     cornell_box,
     cornell_smoke,
+    final_scene,
 };
 
 struct Scene {
@@ -292,6 +355,13 @@ Scene select_scene(SceneID const id)
         lookat = point3{278.0, 278.0, 0.0};
         background_color = black_background;
         break;
+    case SceneID::final_scene:
+        world = final_scene();
+        vertical_fov_degree = FieldOfView{40.0};
+        lookfrom = point3{478.0, 278.0, -600};
+        lookat = point3{278.0, 278.0, 0.0};
+        background_color = black_background;
+        break;
     }
 
     return {world,
@@ -348,10 +418,10 @@ int main() {
     // Image
     int const image_width = 1200;
     int const image_height = static_cast<int>(image_width / aspect_ratio);
-    int const samples_per_pixel = 50;
+    int const samples_per_pixel = 10000;
     int const max_depth = 50;
 
-    auto const scene = select_scene(SceneID::cornell_smoke);
+    auto const scene = select_scene(SceneID::final_scene);
 
     std::vector<std::vector<color>> result(image_height, std::vector<color>(image_width));
 

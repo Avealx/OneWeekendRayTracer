@@ -6,7 +6,8 @@ My take on the fantastic series by Shirley, Black, and Hollasch:
 * [_Ray Tracing: The Rest of Your Life_](https://raytracing.github.io/books/RayTracingTheRestOfYourLife.html) (ongoing, of course)
 
 ![Final screenshot of book 2](/data/output/TheNextWeek/image_08_final_scene.png)
-Final rendering of book 2. A beautiful scene showcasing different materials (glass, metal and diffuse), multiple instances, textures, motion blur and Perlin-noise.
+
+Final rendering of book 2. A beautiful scene showcasing different materials (glass, metal and diffuse), multiple instances, textures, motion blur and Perlin Noise.
 
 # Install
 
@@ -22,6 +23,9 @@ Although an reference implementation is given by the authors, I used TDD to get 
 
 ## Parallelism
 Ray tracing is inherently [embarrassingly parallel](https://en.wikipedia.org/wiki/Embarrassingly_parallel). Yet, when parallelizing the algorithm, the performance was nowhere near the expectation. Profiling showed that most of the time was spend in the random number generator. Making the random number generator thread-local added another factor of 2.
+
+## Perlin Noise
+I found the original exposition of this topic a bit hard to follow. It is stated to be based on [Andwrew Kensler's](http://eastfarthing.com/blog/2015-04-21-noise/) explanation, which I think is an excellent resource.
 
 ## TODO
 - [x] parallelize

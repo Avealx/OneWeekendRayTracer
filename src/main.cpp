@@ -74,10 +74,10 @@ void render_rows(Counter& rows,
 
 int main() {
     // Image
-    int const image_width = 300;
+    std::size_t const image_width = 300;
     std::size_t const image_height = static_cast<int>(image_width / aspect_ratio.value());
-    int const samples_per_pixel = 50;
-    int const max_depth = 5;
+    std::size_t const samples_per_pixel = 50;
+    std::size_t const max_depth = 5;
 
     auto const scene = create_scene(SceneID::final_scene, aspect_ratio);
 
